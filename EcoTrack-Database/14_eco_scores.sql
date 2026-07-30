@@ -1,0 +1,1 @@
+-- Stores monthly or periodic eco scores for users.

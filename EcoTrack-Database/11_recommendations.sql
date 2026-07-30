@@ -1,0 +1,1 @@
+-- Stores recommendations suggested to users.
