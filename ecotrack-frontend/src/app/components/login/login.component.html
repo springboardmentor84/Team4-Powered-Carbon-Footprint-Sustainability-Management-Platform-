@@ -1,0 +1,37 @@
+<div class="login-page">
+  <form class="eco-card login-card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <span class="login-card__mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+        <path d="M12 2C7 2 4 6 4 11c0 6 4 10 8 11 4-1 8-5 8-11 0-5-3-9-8-9Z" fill="#52796f"/>
+        <path d="M12 6v13" stroke="#0f2e22" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+
+    <h1>Welcome back</h1>
+    <p>Log in to see your Eco Score, goals, and progress.</p>
+
+    <label class="field">
+      <span>Name</span>
+      <input type="text" formControlName="name" placeholder="e.g. Asha Mehta" autocomplete="name" />
+      @if (submitted() && f.name.invalid) {
+        <span class="field__error">Enter your name (at least 2 characters).</span>
+      }
+    </label>
+
+    <label class="field">
+      <span>Password</span>
+      <input type="password" formControlName="password" placeholder="••••••••" autocomplete="current-password" />
+      @if (submitted() && f.password.invalid) {
+        <span class="field__error">Enter a password (at least 4 characters).</span>
+      }
+    </label>
+
+    <button type="submit" class="eco-btn eco-btn--primary login-card__submit">Log in</button>
+
+    <p class="login-card__note">
+      Demo login — any name and password will work. There's no account behind this yet.
+    </p>
+
+    <a routerLink="/dashboard" class="login-card__skip">Continue without logging in →</a>
+  </form>
+</div>

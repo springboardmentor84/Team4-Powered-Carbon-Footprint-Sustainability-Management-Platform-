@@ -1,0 +1,38 @@
+<div class="eco-page">
+  <div class="eco-page-header">
+    <div>
+      <span class="eco-eyebrow">Sustainability Goals</span>
+      <h1>Track what you're working toward</h1>
+    </div>
+    <button class="eco-btn eco-btn--amber">+ New goal</button>
+  </div>
+
+  <div class="summary">
+    <div class="summary__item"><strong class="eco-mono">{{ summary().total }}</strong><span>Total goals</span></div>
+    <div class="summary__item"><strong class="eco-mono">{{ summary().onTrack }}</strong><span>On track</span></div>
+    <div class="summary__item"><strong class="eco-mono">{{ summary().achieved }}</strong><span>Achieved</span></div>
+    <div class="summary__item"><strong class="eco-mono">{{ summary().atRisk }}</strong><span>At risk</span></div>
+  </div>
+
+  <div class="goal-grid">
+    @for (goal of goals(); track goal.id) {
+      <div class="eco-card goal-card">
+        <div class="goal-card__top">
+          <span class="eco-tag">{{ goal.type }}</span>
+          <span class="status" [ngClass]="statusClass(goal.status)">{{ goal.status }}</span>
+        </div>
+        <h3>{{ goal.title }}</h3>
+        <div class="goal-card__progress">
+          <div class="track"><div class="fill" [style.width.%]="progressPct(goal)"></div></div>
+          <span class="eco-mono progress-label">{{ goal.current }}/{{ goal.target }} {{ goal.unit }}</span>
+        </div>
+        <div class="goal-card__footer">
+          <span class="deadline">Due {{ goal.deadline }}</span>
+          @if (goal.status !== 'Achieved') {
+            <button class="eco-btn eco-btn--ghost" (click)="bump(goal)">Log progress</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
