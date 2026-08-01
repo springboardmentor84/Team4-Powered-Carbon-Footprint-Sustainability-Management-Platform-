@@ -1,0 +1,64 @@
+<div class="eco-page">
+  <div class="eco-page-header">
+    <div>
+      <span class="eco-eyebrow">Community Challenges</span>
+      <h1>Take on something together</h1>
+    </div>
+    <input
+      class="search"
+      type="text"
+      placeholder="Search challenges or categories…"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+
+  <div class="layout">
+    <div class="challenge-grid">
+      @for (c of filtered(); track c.id) {
+        <div class="eco-card challenge-card">
+          <div class="challenge-card__top">
+            <span class="eco-tag">{{ c.category }}</span>
+            <span class="days-left">{{ c.daysLeft }} days left</span>
+          </div>
+          <h3>{{ c.name }}</h3>
+          <p>{{ c.description }}</p>
+
+          @if (c.joined) {
+            <div class="track"><div class="fill" [style.width.%]="c.progress"></div></div>
+            <span class="progress-text eco-mono">{{ c.progress }}% complete</span>
+          }
+
+          <div class="challenge-card__footer">
+            <div class="meta">
+              <span>{{ c.participants | number }} joined</span>
+              <span class="reward">🏅 {{ c.reward }}</span>
+            </div>
+            <button
+              class="eco-btn"
+              [class.eco-btn--primary]="!c.joined"
+              [class.eco-btn--ghost]="c.joined"
+              (click)="toggle(c.id)"
+            >
+              {{ c.joined ? 'Leave' : 'Join' }}
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <p class="empty-msg">No challenges match your search.</p>
+      }
+    </div>
+
+    <aside class="eco-card leaderboard">
+      <h3>Leaderboard</h3>
+      <ol class="leaderboard__list">
+        @for (row of leaderboard(); track row.rank) {
+          <li class="leaderboard__row">
+            <span class="rank eco-mono">#{{ row.rank }}</span>
+            <span class="name">{{ row.name }}</span>
+            <span class="score eco-mono">{{ row.ecoScore }}</span>
+          </li>
+        }
+      </ol>
+    </aside>
+  </div>
+</div>
