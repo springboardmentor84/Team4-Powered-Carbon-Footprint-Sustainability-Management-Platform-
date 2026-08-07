@@ -1,7 +1,9 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MockDataService } from '../../services/mock-data.service';
+import { CarbonService } from '../../services/carbon.service';
 import { CarbonEntry } from '../../models/data.model';
 
 const CATEGORIES: CarbonEntry['category'][] = [
@@ -15,7 +17,6 @@ const CATEGORIES: CarbonEntry['category'][] = [
   'Travel Activities',
 ];
 
-// Rough kg CO2e per unit, standing in for the backend's carbon calculation engine.
 const EMISSION_FACTORS: Record<string, number> = {
   Transportation: 0.21,
   'Electricity Usage': 0.45,
@@ -34,9 +35,26 @@ const EMISSION_FACTORS: Record<string, number> = {
   templateUrl: './carbon-tracker.component.html',
   styleUrl: './carbon-tracker.component.css',
 })
-export class CarbonTrackerComponent {
+export class CarbonTrackerComponent implements OnInit {
+
   private fb = inject(FormBuilder);
   private data = inject(MockDataService);
+  private carbonService = inject(CarbonService);
+
+  activityList: any[] = [];
+  readonly filteredActivityList = computed(() => {
+
+  const selected = this.filter();
+
+  if (selected === 'All') {
+    return this.activityList;
+  }
+
+  return this.activityList.filter(
+    activity => activity.category === selected
+  );
+
+});
 
   readonly categories = CATEGORIES;
   readonly entries = this.data.getCarbonEntries();
@@ -72,11 +90,14 @@ export class CarbonTrackerComponent {
   }
 
   submit() {
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
+
     const v = this.form.value;
+
     const entry: CarbonEntry = {
       id: 'c' + Math.random().toString(36).slice(2, 8),
       date: v.date!,
@@ -84,7 +105,74 @@ export class CarbonTrackerComponent {
       activity: `${v.activity} — ${v.quantity} ${v.unit}`,
       kgCo2e: this.estimatedKg(),
     };
+
     this.data.addCarbonEntry(entry);
-    this.form.patchValue({ activity: '', quantity: 1 });
+
+    const activity = {
+      category: v.category,
+      description: v.activity,
+      quantity: Number(v.quantity),
+      unit: v.unit,
+      carbonEmission: this.estimatedKg(),
+      activityDate: v.date,
+      email: localStorage.getItem('email')
+    };
+
+    this.carbonService.saveActivity(activity).subscribe({
+
+      next: (response: any) => {
+
+        console.log("Activity Saved Successfully", response);
+
+        this.ngOnInit();
+
+        this.form.patchValue({
+          activity: '',
+          quantity: 1
+        });
+
+        alert("Activity Saved Successfully");
+
+      },
+
+      error: (error: any) => {
+
+        console.error("Database Save Failed", error);
+
+        alert("Failed to Save Activity");
+
+      }
+
+    });
+
   }
+
+  ngOnInit(): void {
+
+    const email = localStorage.getItem("email");
+
+    if (email) {
+
+      this.carbonService.getActivities(email).subscribe({
+
+        next: (data) => {
+
+          this.activityList = data;
+
+          console.log("Activities from DB:", data);
+
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+        }
+
+      });
+
+    }
+
+  }
+
 }

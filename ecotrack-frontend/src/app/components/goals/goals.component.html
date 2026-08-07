@@ -1,38 +1,294 @@
-<div class="eco-page">
-  <div class="eco-page-header">
-    <div>
-      <span class="eco-eyebrow">Sustainability Goals</span>
+<div class="goals-page">
+
+  <!-- HEADER -->
+  <section class="goals-header">
+
+    <div class="header-content">
+      <span class="eco-eyebrow">SUSTAINABILITY GOALS</span>
+
       <h1>Track what you're working toward</h1>
     </div>
-    <button class="eco-btn eco-btn--amber">+ New goal</button>
-  </div>
 
-  <div class="summary">
-    <div class="summary__item"><strong class="eco-mono">{{ summary().total }}</strong><span>Total goals</span></div>
-    <div class="summary__item"><strong class="eco-mono">{{ summary().onTrack }}</strong><span>On track</span></div>
-    <div class="summary__item"><strong class="eco-mono">{{ summary().achieved }}</strong><span>Achieved</span></div>
-    <div class="summary__item"><strong class="eco-mono">{{ summary().atRisk }}</strong><span>At risk</span></div>
-  </div>
+    <button
+      class="new-goal-btn"
+      (click)="openGoalForm()">
+      + New Goal
+    </button>
 
-  <div class="goal-grid">
-    @for (goal of goals(); track goal.id) {
-      <div class="eco-card goal-card">
-        <div class="goal-card__top">
-          <span class="eco-tag">{{ goal.type }}</span>
-          <span class="status" [ngClass]="statusClass(goal.status)">{{ goal.status }}</span>
+  </section>
+
+
+  <!-- CREATE GOAL FORM -->
+  @if (showGoalForm) {
+
+    <div class="goal-form-overlay">
+
+      <div class="goal-form-card">
+
+        <div class="form-header">
+          <div>
+            <span class="eco-eyebrow">NEW GOAL</span>
+            <h2>Create New Goal</h2>
+          </div>
+
+          <button
+            class="close-form-btn"
+            (click)="closeGoalForm()">
+            ×
+          </button>
         </div>
-        <h3>{{ goal.title }}</h3>
-        <div class="goal-card__progress">
-          <div class="track"><div class="fill" [style.width.%]="progressPct(goal)"></div></div>
-          <span class="eco-mono progress-label">{{ goal.current }}/{{ goal.target }} {{ goal.unit }}</span>
+
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Goal Title</label>
+
+            <input
+              type="text"
+              [(ngModel)]="goal.title"
+              placeholder="Example: Plant trees">
+          </div>
+
+
+          <div class="form-group">
+            <label>Goal Type</label>
+
+            <input
+              type="text"
+              [(ngModel)]="goal.type"
+              placeholder="Example: Plant Trees">
+          </div>
+
+
+          <div class="form-group">
+            <label>Target</label>
+
+            <input
+              type="number"
+              [(ngModel)]="goal.targetKg"
+              min="1">
+          </div>
+
+
+          <div class="form-group">
+            <label>Unit</label>
+
+            <input
+              type="text"
+              [(ngModel)]="goal.unit"
+              placeholder="kg / days / trees">
+          </div>
+
+
+          <div class="form-group">
+            <label>Deadline</label>
+
+            <input
+              type="date"
+              [(ngModel)]="goal.endDate">
+          </div>
+
         </div>
-        <div class="goal-card__footer">
-          <span class="deadline">Due {{ goal.deadline }}</span>
-          @if (goal.status !== 'Achieved') {
-            <button class="eco-btn eco-btn--ghost" (click)="bump(goal)">Log progress</button>
-          }
+
+
+        <div class="form-actions">
+
+          <button
+            class="cancel-btn"
+            (click)="closeGoalForm()">
+            Cancel
+          </button>
+
+          <button
+            class="save-goal-btn"
+            (click)="saveGoal()">
+            Save Goal
+          </button>
+
         </div>
+
       </div>
+
+    </div>
+
+  }
+
+
+  <!-- SUMMARY -->
+  <section class="summary-grid">
+
+    <div class="summary-card">
+
+      <strong>{{ summary.total }}</strong>
+
+      <span>Total goals</span>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <strong>{{ summary.onTrack }}</strong>
+
+      <span>On track</span>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <strong>{{ summary.achieved }}</strong>
+
+      <span>Achieved</span>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <strong>{{ summary.atRisk }}</strong>
+
+      <span>At risk</span>
+
+    </div>
+
+  </section>
+
+
+  <!-- GOALS -->
+  <section class="goals-section">
+
+    @if (goalList.length === 0) {
+
+      <div class="empty-goals">
+
+        <div class="empty-icon">
+          🎯
+        </div>
+
+        <h3>No goals yet</h3>
+
+        <p>
+          Create your first sustainability goal and start tracking your progress.
+        </p>
+
+        <button
+          class="new-goal-btn"
+          (click)="openGoalForm()">
+          + Create Goal
+        </button>
+
+      </div>
+
     }
-  </div>
+
+
+    @else {
+
+      <div class="goal-grid">
+
+        @for (goal of goalList; track goal.id) {
+
+          <article class="goal-card">
+
+
+            <!-- CARD TOP -->
+            <div class="goal-card-top">
+
+              <span class="goal-type">
+                {{ goal.type }}
+              </span>
+
+
+              <span
+                class="goal-status"
+                [ngClass]="statusClass(goal.status)">
+
+                {{ goal.status }}
+
+              </span>
+
+            </div>
+
+
+            <!-- TITLE -->
+            <h3>
+              {{ goal.title }}
+            </h3>
+
+
+            <!-- PROGRESS -->
+            <div class="progress-area">
+
+              <div class="progress-track">
+
+               <div
+  class="progress-fill"
+  [style.width]="progressPct(goal) + '%'">
+</div>
+
+              </div>
+
+
+              <div class="progress-info">
+
+                <span>
+                  {{ goal.currentKg }}/{{ goal.targetKg }}
+                  {{ goal.unit }}
+                </span>
+
+                <strong>
+                  {{ progressPct(goal) }}%
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <!-- COMPLETE TEXT -->
+            <div class="complete-text">
+              {{ progressPct(goal) }}% complete
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="goal-footer">
+
+              <span class="deadline">
+                Due {{ goal.endDate }}
+              </span>
+
+
+              <div class="goal-actions">
+
+                <button
+                  class="progress-btn"
+                  (click)="bump(goal)">
+                  Log Progress
+                </button>
+
+
+                <button
+                  class="delete-btn"
+                  (click)="deleteGoal(goal.id!)"
+                  title="Delete Goal">
+                  🗑
+                </button>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    }
+
+  </section>
+
 </div>

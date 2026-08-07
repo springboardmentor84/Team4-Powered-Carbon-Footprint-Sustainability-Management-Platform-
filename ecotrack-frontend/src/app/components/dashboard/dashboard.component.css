@@ -71,3 +71,448 @@
   .hero, .grid-2 { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr; }
 }
+/* ================================
+   Recent Activities
+================================ */
+
+.recent-activities {
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.section-header h3 {
+  margin: 5px 0 0;
+  font-size: 20px;
+}
+
+/* Activity list */
+
+.activity-list {
+  width: 100%;
+}
+
+/* Single activity */
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  column-gap: 14px;
+
+  min-height: 72px;
+  padding: 12px 4px;
+
+  border-bottom: 1px solid #eee8dc;
+}
+
+.activity-row:last-child {
+  border-bottom: none;
+}
+
+/* Icon */
+
+.activity-icon {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 11px;
+
+  background: #eef5ed;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 19px;
+}
+
+/* Activity information */
+
+.activity-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  gap: 2px;
+}
+
+.activity-info strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #123c2b;
+}
+
+.activity-info span {
+  font-size: 13px;
+  color: #666;
+}
+
+.activity-info small {
+  font-size: 11px;
+  color: #999;
+}
+
+/* Carbon value */
+
+.activity-emission {
+  min-width: 90px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+
+  text-align: right;
+}
+
+.activity-emission strong {
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: #123c2b;
+}
+
+.activity-emission span {
+  margin-top: 2px;
+
+  font-size: 10px;
+  color: #888;
+}
+
+/* Empty state */
+
+.empty-state {
+  text-align: center;
+  padding: 35px 20px;
+  color: #777;
+}
+
+.empty-state p {
+  margin-bottom: 15px;
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+  .recent-activities {
+    padding: 18px;
+  }
+
+  .activity-row {
+    grid-template-columns: 42px 1fr auto;
+    column-gap: 10px;
+    min-height: 65px;
+  }
+
+  .activity-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .activity-emission {
+    min-width: 70px;
+  }
+
+}
+/* ================================
+   Goal Progress
+================================ */
+
+.goal-progress {
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.goal-item {
+  padding-bottom: 18px;
+  border-bottom: 1px solid #eee8dc;
+}
+
+.goal-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.goal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.goal-top > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.goal-top strong {
+  font-size: 14px;
+  color: #123c2b;
+}
+
+.goal-top span {
+  font-size: 11px;
+  color: #888;
+}
+
+.goal-percent {
+  font-family: monospace;
+  font-size: 14px !important;
+}
+
+.goal-track {
+  width: 100%;
+  height: 8px;
+  background: #eee9dd;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.goal-fill {
+  height: 100%;
+  background: #84a98c;
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+
+.goal-bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-size: 11px;
+  color: #888;
+}
+
+.goal-achieved {
+  color: #4f8060 !important;
+  font-weight: 600;
+}
+/* =========================
+   GOAL PROGRESS
+   ========================= */
+
+.goals-section {
+  margin-top: 24px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 5px 0 0;
+  font-size: 20px;
+}
+
+.goal-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-item {
+  padding: 18px 0;
+  border-bottom: 1px solid #eee8dc;
+}
+
+.goal-item:first-child {
+  padding-top: 5px;
+}
+
+.goal-item:last-child {
+  border-bottom: none;
+  padding-bottom: 5px;
+}
+
+.goal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.goal-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.goal-info strong {
+  font-size: 15px;
+  color: #123c2d;
+}
+
+.goal-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  line-height: 1;
+  background: #f1eadc;
+  color: #77705f;
+}
+
+.goal-percent {
+  min-width: 40px;
+  text-align: right;
+  font-size: 13px;
+  color: #123c2d;
+}
+
+.goal-track {
+  width: 100%;
+  height: 7px;
+  margin-top: 10px;
+  background: #eee8dc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.goal-fill {
+  height: 100%;
+  background: #84a98c;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.goal-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #8b867c;
+}
+/* =========================
+   DARKER TEXT - ACTIVITIES
+   ========================= */
+
+.activity-history h3,
+.recent-activities h3 {
+  color: #123c2d;
+}
+
+.activity-history strong,
+.recent-activities strong {
+  color: #123c2d;
+}
+
+.activity-history p,
+.recent-activities p {
+  color: #5f625d;
+}
+
+
+/* =========================
+   DARKER TEXT - GOALS
+   ========================= */
+
+.goals-section h3 {
+  color: #123c2d;
+}
+
+.goal-info strong {
+  color: #123c2d;
+  font-weight: 700;
+}
+
+.goal-status {
+  color: #5f625d;
+  font-weight: 600;
+}
+
+.goal-bottom {
+  color: #666860;
+}
+
+.goal-bottom span:last-child {
+  color: #5f625d;
+  font-weight: 600;
+}
+
+.goal-percent {
+  color: #123c2d;
+  font-weight: 700;
+}
+
+
+/* Target text */
+.goal-bottom span:first-child {
+  color: #666860;
+}
+.activity-item strong {
+  color: #123c2d;
+  font-weight: 700;
+}
+
+.activity-item {
+  color: #4f554f;
+}
+
+.activity-item small {
+  color: #777a73;
+}
+
+.activity-item .activity-emission {
+  color: #123c2d;
+  font-weight: 700;
+}
+/* Recent Activities - darker secondary text */
+
+.activity-item .activity-description,
+.activity-item .activity-detail,
+.activity-item small,
+.activity-item .activity-date {
+  color: #555b56 !important;
+}
+
+
+/* Goal details - darker text */
+
+.goal-status {
+  color: #555b56 !important;
+  font-weight: 600;
+}
+
+.goal-bottom {
+  color: #555b56 !important;
+}
+
+.goal-bottom span {
+  color: #555b56 !important;
+}
+
+
+/* Goal title */
+.goal-info strong {
+  color: #123c2d !important;
+}
+
+
+/* Activity description like bike, car, tv */
+.activity-item p,
+.activity-item span {
+  color: #555b56;
+}

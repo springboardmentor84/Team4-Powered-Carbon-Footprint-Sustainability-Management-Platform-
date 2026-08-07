@@ -1,47 +1,87 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MockDataService } from '../../services/mock-data.service';
+
+import { CarbonService } from '../../services/carbon.service';
+import { GoalService } from '../../services/goal.service';
+import { CarbonChartComponent } from '../carbon-chart/carbon-chart.component';
 
 @Component({
   selector: 'eco-dashboard',
   standalone: true,
-  imports: [DecimalPipe, RouterLink],
+  imports: [
+  DecimalPipe,
+  RouterLink,
+  CarbonChartComponent
+],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent {
-  private data = inject(MockDataService);
+export class DashboardComponent implements OnInit {
 
-  readonly user = this.data.getUser();
-  readonly entries = this.data.getCarbonEntries();
-  readonly goals = this.data.getGoals();
-  readonly challenges = this.data.getChallenges();
-  readonly recommendations = this.data.getRecommendations();
+  private carbonService = inject(CarbonService);
+  private goalService = inject(GoalService);
 
-  readonly weekTotalKg = computed(() =>
-    this.entries().reduce((sum, e) => sum + e.kgCo2e, 0)
+  username = "";
+
+  readonly activityList = signal<any[]>([]);
+  readonly goalList = signal<any[]>([]);
+
+  readonly totalCarbon = computed(() =>
+    this.activityList().reduce(
+      (sum: number, a: any) => sum + Number(a.carbonEmission),
+      0
+    )
   );
 
-  readonly categoryBreakdown = computed(() => {
-    const totals = new Map<string, number>();
-    for (const e of this.entries()) {
-      totals.set(e.category, (totals.get(e.category) ?? 0) + e.kgCo2e);
-    }
-    const max = Math.max(...Array.from(totals.values()), 1);
-    return Array.from(totals.entries())
-      .map(([category, kg]) => ({ category, kg, pct: (kg / max) * 100 }))
-      .sort((a, b) => b.kg - a.kg);
-  });
-
-  readonly goalsOnTrack = computed(
-    () => this.goals().filter((g) => g.status === 'On Track' || g.status === 'Achieved').length
+  readonly activeGoals = computed(() =>
+    this.goalList().filter((g: any) => g.status !== "Achieved").length
   );
 
-  readonly activeChallenges = computed(() => this.challenges().filter((c) => c.joined));
+  readonly achievedGoals = computed(() =>
+    this.goalList().filter((g: any) => g.status === "Achieved").length
+  );
 
-  readonly ringOffset = computed(() => {
-    const circumference = 2 * Math.PI * 54;
-    return circumference - (circumference * this.user().ecoScore) / 1000;
-  });
+  ngOnInit(): void {
+
+    const email = localStorage.getItem("email");
+
+    if (!email) return;
+
+    this.username = email.split("@")[0];
+
+    this.carbonService.getActivities(email).subscribe({
+
+      next: (data: any[]) => {
+
+        this.activityList.set(data);
+
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+      }
+
+    });
+
+    this.goalService.getGoals(email).subscribe({
+
+      next: (data: any[]) => {
+
+        this.goalList.set(data);
+
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+      }
+
+    });
+
+  }
+
 }

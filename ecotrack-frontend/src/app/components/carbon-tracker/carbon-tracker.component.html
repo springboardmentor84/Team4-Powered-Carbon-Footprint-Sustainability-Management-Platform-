@@ -75,12 +75,24 @@
           <tr><th>Date</th><th>Category</th><th>Activity</th><th class="right">kg CO₂e</th></tr>
         </thead>
         <tbody>
-          @for (e of filteredEntries(); track e.id) {
+          @for (e of filteredActivityList(); track e.id) {
             <tr>
-              <td>{{ e.date }}</td>
-              <td><span class="eco-tag">{{ e.category }}</span></td>
-              <td>{{ e.activity }}</td>
-              <td class="right eco-mono">{{ e.kgCo2e | number: '1.1-1' }}</td>
+             <td>{{ e.activityDate }}</td>
+
+<td>
+  <span class="eco-tag">
+    {{ e.category }}
+  </span>
+</td>
+
+<td>
+  {{ e.description }}
+  ({{ e.quantity }} {{ e.unit }})
+</td>
+
+<td class="right eco-mono">
+  {{ e.carbonEmission | number:'1.1-1' }}
+</td>
             </tr>
           } @empty {
             <tr><td colspan="4" class="empty">No entries in this category yet.</td></tr>

@@ -5,13 +5,13 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'eco-login',
+  selector: 'eco-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
-export class LoginComponent {
+export class RegisterComponent {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -20,8 +20,9 @@ export class LoginComponent {
   submitted = signal(false);
 
   form = this.fb.group({
+    fullName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   get f() {
@@ -36,29 +37,22 @@ export class LoginComponent {
       return;
     }
 
-    const loginData = {
+    const registerData = {
+      fullName: this.form.value.fullName!,
       email: this.form.value.email!,
       password: this.form.value.password!
     };
 
-    this.authService.login(loginData).subscribe({
+    this.authService.register(registerData).subscribe({
 
-      next: (response: any) => {
-
-        console.log('Login Success:', response);
-
-        this.authService.saveUser(response);
-
-        this.router.navigate(['/dashboard']);
-
+      next: () => {
+        alert("Registration Successful!");
+        this.router.navigate(['/login']);
       },
 
       error: (err) => {
-
-        console.error('Login Failed:', err);
-
-        alert('Invalid Email or Password');
-
+        console.error(err);
+        alert("Registration Failed");
       }
 
     });

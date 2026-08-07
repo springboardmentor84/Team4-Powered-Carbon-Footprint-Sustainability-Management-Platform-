@@ -1,0 +1,79 @@
+<div class="login-page">
+  <form
+    class="eco-card login-card"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    novalidate
+  >
+
+    <h1>Create Account</h1>
+    <p>Create your EcoTrack account.</p>
+
+    <!-- Full Name -->
+    <label class="field">
+      <span>Full Name</span>
+
+      <input
+        type="text"
+        formControlName="fullName"
+        placeholder="Enter your full name"
+      />
+
+      <span
+        class="field__error"
+        *ngIf="submitted() && f.fullName.invalid"
+      >
+        Full Name is required.
+      </span>
+    </label>
+
+    <!-- Email -->
+    <label class="field">
+      <span>Email</span>
+
+      <input
+        type="email"
+        formControlName="email"
+        placeholder="Enter your email"
+      />
+
+      <span
+        class="field__error"
+        *ngIf="submitted() && f.email.invalid"
+      >
+        Enter a valid email.
+      </span>
+    </label>
+
+    <!-- Password -->
+    <label class="field">
+      <span>Password</span>
+
+      <input
+        type="password"
+        formControlName="password"
+        placeholder="Enter your password"
+      />
+
+      <span
+        class="field__error"
+        *ngIf="submitted() && f.password.invalid"
+      >
+        Password must be at least 6 characters.
+      </span>
+    </label>
+
+    <button
+      type="submit"
+      class="eco-btn eco-btn--primary login-card__submit"
+    >
+      Create Account
+    </button>
+
+    <p class="signup-text">
+      Already have an account?
+      <a routerLink="/login">Login</a>
+    </p>
+
+  </form>
+</div>

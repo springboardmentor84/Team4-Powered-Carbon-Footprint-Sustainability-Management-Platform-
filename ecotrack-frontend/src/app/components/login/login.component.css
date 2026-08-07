@@ -80,3 +80,18 @@
 .login-card__skip:hover {
   color: var(--pine-700);
 }
+.signup-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+.signup-text a {
+  color: #2e7d32;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}

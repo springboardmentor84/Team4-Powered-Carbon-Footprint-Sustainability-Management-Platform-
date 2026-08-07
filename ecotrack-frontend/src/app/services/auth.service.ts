@@ -1,55 +1,49 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-const STORAGE_KEY = 'ecotrack_auth_user';
-
-/**
- * Stands in for the real authentication call the Angular app would make
- * against the User Service (e.g. POST /api/auth/login). Persists the
- * logged-in display name to localStorage so the session survives a
- * page refresh.
- */
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  private readonly _userName = signal<string | null>(this.readStoredUser());
+
+  private apiUrl = 'http://localhost:8080/auth';
+
+  private _userName = signal<string | null>(localStorage.getItem('email'));
 
   readonly userName = this._userName.asReadonly();
-  readonly isLoggedIn = computed(() => this._userName() !== null);
+  readonly isLoggedIn = computed(() => this._userName() != null);
 
-  private readStoredUser(): string | null {
-    try {
-      return localStorage.getItem(STORAGE_KEY);
-    } catch {
-      return null;
-    }
+  constructor(private http: HttpClient) {}
+
+  login(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, data);
   }
 
-  login(name: string): void {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    this._userName.set(trimmed);
-    try {
-      localStorage.setItem(STORAGE_KEY, trimmed);
-    } catch {
-      /* localStorage unavailable — session just won't persist across reloads */
-    }
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, data);
   }
 
-  logout(): void {
+  saveUser(response: any) {
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('email', response.email);
+
+    this._userName.set(response.email);
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('email');
     this._userName.set(null);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* no-op */
-    }
   }
 
   initials(name: string | null): string {
     if (!name) return '';
+
     return name
       .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase() ?? '')
+      .split(' ')
+      .map(part => part.charAt(0).toUpperCase())
       .join('');
   }
 }
