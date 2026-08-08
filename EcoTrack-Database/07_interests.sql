@@ -1,2 +1,5 @@
--- Listing down the users Interests
+CREATE TABLE interests (
+	interest_id SERIAL PRIMARY KEY,
+	name VARCHAR(100) NOT NULL UNIQUE
+);
 
