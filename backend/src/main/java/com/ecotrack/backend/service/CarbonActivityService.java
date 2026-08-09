@@ -44,5 +44,14 @@ public class CarbonActivityService {
 
         return carbonActivityRepository.findByUser(user);
     }
+    // Delete User Activity
+    public void deleteActivity(Long id, String email) {
 
+        CarbonActivity activity = carbonActivityRepository
+                .findByIdAndUserEmail(id, email)
+                .orElseThrow(() ->
+                        new RuntimeException("Activity not found for ID: " + id));
+
+        carbonActivityRepository.delete(activity);
+    }
 }
