@@ -24,12 +24,25 @@
 
   <section class="eco-card">
     <h3>Report history</h3>
+
+    <eco-search-filter-bar
+      placeholder="Search reports by title or period…"
+      [searchValue]="search()"
+      [filterGroups]="filterGroups"
+      [activeFilters]="activeFilters()"
+      [resultCount]="filteredReports().length"
+      [totalCount]="reports().length"
+      (searchChange)="onSearchChange($event)"
+      (filterChange)="onFilterChange($event)"
+      (clearAll)="clearFilters()"
+    ></eco-search-filter-bar>
+
     <table class="table">
       <thead>
         <tr><th>Title</th><th>Type</th><th>Period</th><th>Generated</th><th>Format</th><th></th></tr>
       </thead>
       <tbody>
-        @for (r of reports(); track r.id) {
+        @for (r of filteredReports(); track r.id) {
           <tr>
             <td>{{ r.title }}</td>
             <td><span class="eco-tag">{{ r.type }}</span></td>
@@ -40,6 +53,8 @@
               <button class="eco-btn eco-btn--ghost" (click)="download(r)">Download</button>
             </td>
           </tr>
+        } @empty {
+          <tr><td colspan="6" class="empty">No reports match your search or filters.</td></tr>
         }
       </tbody>
     </table>

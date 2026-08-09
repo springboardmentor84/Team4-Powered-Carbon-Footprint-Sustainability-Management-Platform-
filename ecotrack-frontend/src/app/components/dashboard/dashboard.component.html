@@ -80,4 +80,51 @@
       </ul>
     </div>
   </section>
+
+  <section class="grid-2">
+    <div class="eco-card">
+      <h3>Daily emissions trend</h3>
+      <div class="trend">
+        @for (row of dailyTrend(); track row.date) {
+          <div class="trend__col">
+            <div class="trend__bar-track">
+              <div class="trend__bar" [style.height.%]="row.pct"></div>
+            </div>
+            <span class="trend__value eco-mono">{{ row.kg | number: '1.0-0' }}</span>
+            <span class="trend__date">{{ row.date.slice(5) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="eco-card community">
+      <h3>You vs the community</h3>
+      <div class="community__compare">
+        <div class="community__stat">
+          <span class="eco-eyebrow">Your Eco Score</span>
+          <span class="eco-mono community__num">{{ user().ecoScore }}</span>
+        </div>
+        <div class="community__stat">
+          <span class="eco-eyebrow">Community average</span>
+          <span class="eco-mono community__num community__num--muted">{{ communityAverage() }}</span>
+        </div>
+      </div>
+      <span class="eco-tag" [class.eco-tag--positive]="vsAverage() >= 0">
+        {{ vsAverage() >= 0 ? '+' : '' }}{{ vsAverage() }} vs. average
+      </span>
+
+      <h4 class="community__badges-title">Badges</h4>
+      <div class="badges">
+        @for (b of badges(); track b.id) {
+          <div class="badge" [class.badge--earned]="b.earned" [title]="b.description">
+            <span class="badge__icon">{{ b.earned ? '🏅' : '🔒' }}</span>
+            <span class="badge__name">{{ b.name }}</span>
+          </div>
+        }
+      </div>
+      @if (nextBadge(); as nb) {
+        <p class="community__next">Next up: <strong>{{ nb.name }}</strong> — {{ nb.description }}</p>
+      }
+    </div>
+  </section>
 </div>

@@ -4,13 +4,19 @@
       <span class="eco-eyebrow">Community Challenges</span>
       <h1>Take on something together</h1>
     </div>
-    <input
-      class="search"
-      type="text"
-      placeholder="Search challenges or categories…"
-      (input)="onSearch($any($event.target).value)"
-    />
   </div>
+
+  <eco-search-filter-bar
+    placeholder="Search challenges or categories…"
+    [searchValue]="search()"
+    [filterGroups]="filterGroups()"
+    [activeFilters]="activeFilters()"
+    [resultCount]="filtered().length"
+    [totalCount]="challenges().length"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
+    (clearAll)="clearFilters()"
+  ></eco-search-filter-bar>
 
   <div class="layout">
     <div class="challenge-grid">
@@ -44,7 +50,7 @@
           </div>
         </div>
       } @empty {
-        <p class="empty-msg">No challenges match your search.</p>
+        <p class="empty-msg">No challenges match your search or filters.</p>
       }
     </div>
 

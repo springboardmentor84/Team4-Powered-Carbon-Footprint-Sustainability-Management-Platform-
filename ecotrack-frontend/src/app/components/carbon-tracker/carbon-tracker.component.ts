@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MockDataService } from '../../services/mock-data.service';
 import { CarbonEntry } from '../../models/data.model';
+import { FilterGroup, SearchFilterBarComponent } from '../shared/search-filter-bar/search-filter-bar.component';
 
 const CATEGORIES: CarbonEntry['category'][] = [
   'Transportation',
@@ -30,7 +31,7 @@ const EMISSION_FACTORS: Record<string, number> = {
 @Component({
   selector: 'eco-carbon-tracker',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchFilterBarComponent],
   templateUrl: './carbon-tracker.component.html',
   styleUrl: './carbon-tracker.component.css',
 })
@@ -40,12 +41,61 @@ export class CarbonTrackerComponent {
 
   readonly categories = CATEGORIES;
   readonly entries = this.data.getCarbonEntries();
+
+  // --- Search & filter state ---
+  readonly search = signal('');
   readonly filter = signal<string>('All');
+  readonly sortOrder = signal<'newest' | 'oldest' | 'highest' | 'lowest'>('newest');
+
+  readonly filterGroups: FilterGroup[] = [
+    {
+      key: 'category',
+      label: 'Category',
+      options: [
+        { label: 'All categories', value: 'All' },
+        ...CATEGORIES.map((c) => ({ label: c, value: c })),
+      ],
+    },
+    {
+      key: 'sort',
+      label: 'Sort',
+      options: [
+        { label: 'Newest first', value: 'newest' },
+        { label: 'Oldest first', value: 'oldest' },
+        { label: 'Highest impact', value: 'highest' },
+        { label: 'Lowest impact', value: 'lowest' },
+      ],
+    },
+  ];
+
+  readonly activeFilters = computed(() => ({
+    category: this.filter(),
+    sort: this.sortOrder(),
+  }));
 
   readonly filteredEntries = computed(() => {
-    const f = this.filter();
-    const list = this.entries();
-    return f === 'All' ? list : list.filter((e) => e.category === f);
+    const q = this.search().toLowerCase().trim();
+    const cat = this.filter();
+    let list = this.entries().filter((e) => {
+      const matchesCategory = cat === 'All' || e.category === cat;
+      const matchesSearch =
+        !q || e.activity.toLowerCase().includes(q) || e.category.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    });
+
+    list = [...list].sort((a, b) => {
+      switch (this.sortOrder()) {
+        case 'oldest':
+          return a.date.localeCompare(b.date);
+        case 'highest':
+          return b.kgCo2e - a.kgCo2e;
+        case 'lowest':
+          return a.kgCo2e - b.kgCo2e;
+        default:
+          return b.date.localeCompare(a.date);
+      }
+    });
+    return list;
   });
 
   readonly totalKg = computed(() =>
@@ -69,6 +119,21 @@ export class CarbonTrackerComponent {
 
   setFilter(cat: string) {
     this.filter.set(cat);
+  }
+
+  onSearchChange(value: string) {
+    this.search.set(value);
+  }
+
+  onFilterChange(change: { key: string; value: string }) {
+    if (change.key === 'category') this.filter.set(change.value);
+    if (change.key === 'sort') this.sortOrder.set(change.value as 'newest' | 'oldest' | 'highest' | 'lowest');
+  }
+
+  clearFilters() {
+    this.search.set('');
+    this.filter.set('All');
+    this.sortOrder.set('newest');
   }
 
   submit() {

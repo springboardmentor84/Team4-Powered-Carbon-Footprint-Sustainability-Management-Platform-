@@ -62,13 +62,19 @@
     <div class="eco-card history">
       <div class="history__header">
         <h3>Activity history</h3>
-        <div class="chips">
-          <button class="chip" [class.chip--active]="filter() === 'All'" (click)="setFilter('All')">All</button>
-          @for (cat of categories; track cat) {
-            <button class="chip" [class.chip--active]="filter() === cat" (click)="setFilter(cat)">{{ cat }}</button>
-          }
-        </div>
       </div>
+
+      <eco-search-filter-bar
+        placeholder="Search activities or categories…"
+        [searchValue]="search()"
+        [filterGroups]="filterGroups"
+        [activeFilters]="activeFilters()"
+        [resultCount]="filteredEntries().length"
+        [totalCount]="entries().length"
+        (searchChange)="onSearchChange($event)"
+        (filterChange)="onFilterChange($event)"
+        (clearAll)="clearFilters()"
+      ></eco-search-filter-bar>
 
       <table class="table">
         <thead>
@@ -83,7 +89,7 @@
               <td class="right eco-mono">{{ e.kgCo2e | number: '1.1-1' }}</td>
             </tr>
           } @empty {
-            <tr><td colspan="4" class="empty">No entries in this category yet.</td></tr>
+            <tr><td colspan="4" class="empty">No entries match your search or filters.</td></tr>
           }
         </tbody>
       </table>

@@ -18,6 +18,8 @@ export class DashboardComponent {
   readonly goals = this.data.getGoals();
   readonly challenges = this.data.getChallenges();
   readonly recommendations = this.data.getRecommendations();
+  readonly badges = this.data.getBadges();
+  readonly leaderboard = this.data.getLeaderboard();
 
   readonly weekTotalKg = computed(() =>
     this.entries().reduce((sum, e) => sum + e.kgCo2e, 0)
@@ -44,4 +46,28 @@ export class DashboardComponent {
     const circumference = 2 * Math.PI * 54;
     return circumference - (circumference * this.user().ecoScore) / 1000;
   });
+
+  /** Daily emissions totals, oldest → newest, for the trend sparkline. */
+  readonly dailyTrend = computed(() => {
+    const totals = new Map<string, number>();
+    for (const e of this.entries()) {
+      totals.set(e.date, (totals.get(e.date) ?? 0) + e.kgCo2e);
+    }
+    const rows = Array.from(totals.entries())
+      .map(([date, kg]) => ({ date, kg }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+    const max = Math.max(...rows.map((r) => r.kg), 1);
+    return rows.map((r) => ({ ...r, pct: (r.kg / max) * 100 }));
+  });
+
+  readonly communityAverage = computed(() => {
+    const list = this.leaderboard();
+    if (!list.length) return 0;
+    return Math.round(list.reduce((sum, l) => sum + l.ecoScore, 0) / list.length);
+  });
+
+  readonly vsAverage = computed(() => this.user().ecoScore - this.communityAverage());
+
+  readonly earnedBadges = computed(() => this.badges().filter((b) => b.earned));
+  readonly nextBadge = computed(() => this.badges().find((b) => !b.earned));
 }

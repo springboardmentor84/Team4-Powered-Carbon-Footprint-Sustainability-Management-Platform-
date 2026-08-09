@@ -92,6 +92,7 @@ button {
 .eco-btn--primary {
   background: var(--pine-700);
   color: var(--white);
+  border: 1px solid var(--moss-300);
 }
 .eco-btn--primary:hover { background: var(--pine-800); }
 
@@ -103,10 +104,9 @@ button {
 
 .eco-btn--ghost {
   background: transparent;
-  color: var(--pine-700);
+  color: var(--sand-100);
   border: 1px solid var(--moss-300);
 }
-.eco-btn--ghost:hover { background: var(--sand-100); }
 
 .eco-tag {
   display: inline-block;
