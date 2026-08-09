@@ -1,0 +1,130 @@
+<div class="eco-page">
+  <section class="hero">
+    <div class="hero__text">
+      <span class="eco-eyebrow">Welcome back, {{ user().name.split(' ')[0] }}</span>
+      <h1>Your footprint, this week</h1>
+      <p>
+        You've logged <strong class="eco-mono">{{ weekTotalKg() | number: '1.1-1' }} kg CO₂e</strong>
+        across {{ entries().length }} activities. {{ goalsOnTrack() }} of {{ goals().length }} goals are on track.
+      </p>
+      <div class="hero__actions">
+        <a [routerLink]="['/carbon-tracker']" class="eco-btn eco-btn--primary">Log an activity</a>
+        <a [routerLink]="['/reports']" class="eco-btn eco-btn--ghost">View reports</a>
+      </div>
+    </div>
+
+    <div class="hero__ring-card eco-card">
+      <div class="ring">
+        <svg viewBox="0 0 120 120" width="150" height="150">
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#efe9da" stroke-width="9"/>
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#d68c45" stroke-width="9"
+                  stroke-linecap="round" [attr.stroke-dasharray]="2 * 3.14159 * 54"
+                  [attr.stroke-dashoffset]="ringOffset()" transform="rotate(-90 60 60)"/>
+          <circle cx="60" cy="60" r="40" fill="none" stroke="#84a98c" stroke-width="1" stroke-dasharray="2 4" opacity="0.6"/>
+        </svg>
+        <div class="ring__center">
+          <span class="ring__value eco-mono">{{ user().ecoScore }}</span>
+          <span class="ring__label">Eco Score</span>
+        </div>
+      </div>
+      <span class="eco-tag">{{ user().level }}</span>
+    </div>
+  </section>
+
+  <section class="grid-3">
+    <div class="eco-card stat-card">
+      <span class="eco-eyebrow">Carbon this week</span>
+      <span class="stat-card__value eco-mono">{{ weekTotalKg() | number: '1.0-0' }}<small>kg CO₂e</small></span>
+      <span class="stat-card__hint">across {{ categoryBreakdown().length }} tracked categories</span>
+    </div>
+    <div class="eco-card stat-card">
+      <span class="eco-eyebrow">Goals on track</span>
+      <span class="stat-card__value eco-mono">{{ goalsOnTrack() }}<small>/ {{ goals().length }}</small></span>
+      <span class="stat-card__hint">see full progress in Goals</span>
+    </div>
+    <div class="eco-card stat-card">
+      <span class="eco-eyebrow">Active challenges</span>
+      <span class="stat-card__value eco-mono">{{ activeChallenges().length }}<small>joined</small></span>
+      <span class="stat-card__hint">keep your streak going</span>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="eco-card">
+      <h3>Emissions by category</h3>
+      <div class="bars">
+        @for (row of categoryBreakdown(); track row.category) {
+          <div class="bars__row">
+            <span class="bars__label">{{ row.category }}</span>
+            <div class="bars__track">
+              <div class="bars__fill" [style.width.%]="row.pct"></div>
+            </div>
+            <span class="bars__value eco-mono">{{ row.kg | number: '1.1-1' }} kg</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="eco-card">
+      <h3>Recommended for you</h3>
+      <ul class="recs">
+        @for (rec of recommendations(); track rec.id) {
+          <li class="recs__item">
+            <div class="recs__badge eco-mono">−{{ rec.impactKg }}kg</div>
+            <div>
+              <p class="recs__title">{{ rec.title }}</p>
+              <p class="recs__detail">{{ rec.detail }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="eco-card">
+      <h3>Daily emissions trend</h3>
+      <div class="trend">
+        @for (row of dailyTrend(); track row.date) {
+          <div class="trend__col">
+            <div class="trend__bar-track">
+              <div class="trend__bar" [style.height.%]="row.pct"></div>
+            </div>
+            <span class="trend__value eco-mono">{{ row.kg | number: '1.0-0' }}</span>
+            <span class="trend__date">{{ row.date.slice(5) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="eco-card community">
+      <h3>You vs the community</h3>
+      <div class="community__compare">
+        <div class="community__stat">
+          <span class="eco-eyebrow">Your Eco Score</span>
+          <span class="eco-mono community__num">{{ user().ecoScore }}</span>
+        </div>
+        <div class="community__stat">
+          <span class="eco-eyebrow">Community average</span>
+          <span class="eco-mono community__num community__num--muted">{{ communityAverage() }}</span>
+        </div>
+      </div>
+      <span class="eco-tag" [class.eco-tag--positive]="vsAverage() >= 0">
+        {{ vsAverage() >= 0 ? '+' : '' }}{{ vsAverage() }} vs. average
+      </span>
+
+      <h4 class="community__badges-title">Badges</h4>
+      <div class="badges">
+        @for (b of badges(); track b.id) {
+          <div class="badge" [class.badge--earned]="b.earned" [title]="b.description">
+            <span class="badge__icon">{{ b.earned ? '🏅' : '🔒' }}</span>
+            <span class="badge__name">{{ b.name }}</span>
+          </div>
+        }
+      </div>
+      @if (nextBadge(); as nb) {
+        <p class="community__next">Next up: <strong>{{ nb.name }}</strong> — {{ nb.description }}</p>
+      }
+    </div>
+  </section>
+</div>
