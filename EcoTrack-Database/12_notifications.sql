@@ -1,0 +1,1 @@
+-- Stores notifications sent to users.
