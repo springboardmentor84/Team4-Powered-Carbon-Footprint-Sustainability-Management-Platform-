@@ -1,9 +1,14 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 
 import { MockDataService } from '../../services/mock-data.service';
 import { CarbonService } from '../../services/carbon.service';
+import { CarbonEngineService } from '../../services/carbon-engine.service';
 import { CarbonEntry } from '../../models/data.model';
 
 const CATEGORIES: CarbonEntry['category'][] = [
@@ -40,138 +45,626 @@ export class CarbonTrackerComponent implements OnInit {
   private fb = inject(FormBuilder);
   private data = inject(MockDataService);
   private carbonService = inject(CarbonService);
+  private carbonEngineService = inject(CarbonEngineService);
 
-  activityList: any[] = [];
+  // =========================================================
+  // DATABASE ACTIVITIES
+  // =========================================================
+
+  activityList = signal<any[]>([]);
+
+  carbonEngineEstimate: number | null = null;
+
+  // =========================================================
+  // FILTER DATABASE ACTIVITIES
+  // =========================================================
+
   readonly filteredActivityList = computed(() => {
 
-  const selected = this.filter();
+    const selected = this.filter();
+    const activities = this.activityList();
 
-  if (selected === 'All') {
-    return this.activityList;
-  }
+    if (selected === 'All') {
+      return activities;
+    }
 
-  return this.activityList.filter(
-    activity => activity.category === selected
-  );
+    return activities.filter(
+      activity => activity.category === selected
+    );
 
-});
+  });
+
+  // =========================================================
+  // MOCK DATA
+  // =========================================================
 
   readonly categories = CATEGORIES;
+
   readonly entries = this.data.getCarbonEntries();
-  readonly filter = signal<string>('All');
+
+  readonly filter = signal('All');
 
   readonly filteredEntries = computed(() => {
+
     const f = this.filter();
     const list = this.entries();
-    return f === 'All' ? list : list.filter((e) => e.category === f);
+
+    return f === 'All'
+      ? list
+      : list.filter((e) => e.category === f);
+
   });
 
   readonly totalKg = computed(() =>
-    this.entries().reduce((sum, e) => sum + e.kgCo2e, 0)
+    this.entries().reduce(
+      (sum, e) => sum + e.kgCo2e,
+      0
+    )
   );
 
-  readonly estimatedKg = computed(() => {
-    const category = this.form.value.category as string;
-    const qty = Number(this.form.value.quantity) || 0;
-    const factor = EMISSION_FACTORS[category] ?? 0.5;
-    return Math.round(qty * factor * 100) / 100;
-  });
+  // =========================================================
+  // CALCULATE CARBON
+  // =========================================================
 
-  readonly form = this.fb.group({
-    category: ['Transportation', Validators.required],
-    activity: ['', Validators.required],
-    quantity: [1, [Validators.required, Validators.min(0.1)]],
-    unit: ['km'],
-    date: [new Date().toISOString().slice(0, 10), Validators.required],
-  });
+  estimatedKg(): number {
 
-  setFilter(cat: string) {
-    this.filter.set(cat);
+    const category = String(
+      this.form.value.category || ''
+    );
+
+    const activity = String(
+      this.form.value.activity || ''
+    )
+      .trim()
+      .toLowerCase();
+
+    const qty = Number(
+      this.form.value.quantity
+    ) || 0;
+
+    if (qty <= 0) {
+      return 0;
+    }
+
+    let factor = 0;
+
+    // =======================================================
+    // TRANSPORTATION
+    // =======================================================
+
+    if (category === 'Transportation') {
+
+      switch (activity) {
+
+        case 'car':
+          factor = 0.21;
+          break;
+
+        case 'bike':
+        case 'bicycle':
+          factor = 0.10;
+          break;
+
+        case 'bus':
+          factor = 0.089;
+          break;
+
+        case 'train':
+        case 'metro':
+          factor = 0.041;
+          break;
+
+        case 'truck':
+          factor = 0.30;
+          break;
+
+        default:
+          factor = 0;
+      }
+    }
+
+    // =======================================================
+    // ELECTRICITY USAGE
+    // =======================================================
+
+    else if (category === 'Electricity Usage') {
+
+      switch (activity) {
+
+        case 'tv':
+        case 'ac':
+        case 'refrigerator':
+        case 'washing machine':
+        case 'electricity':
+          factor = 0.82;
+          break;
+
+        default:
+          factor = 0.82;
+      }
+    }
+
+    // =======================================================
+    // FUEL CONSUMPTION
+    // =======================================================
+
+    else if (category === 'Fuel Consumption') {
+
+      switch (activity) {
+
+        case 'petrol':
+          factor = 2.31;
+          break;
+
+        case 'diesel':
+          factor = 2.68;
+          break;
+
+        default:
+          factor = 0;
+      }
+    }
+
+    // =======================================================
+    // FOOD CONSUMPTION
+    // =======================================================
+
+    else if (category === 'Food Consumption') {
+
+      switch (activity) {
+
+        case 'veg':
+        case 'vegetarian':
+          factor = 0.50;
+          break;
+
+        case 'non veg':
+        case 'non-veg':
+        case 'non vegetarian':
+          factor = 2.50;
+          break;
+
+        case 'vegan':
+          factor = 0.30;
+          break;
+
+        default:
+          factor = 1.50;
+      }
+    }
+
+    // =======================================================
+    // WASTE GENERATION
+    // =======================================================
+
+    else if (category === 'Waste Generation') {
+
+      switch (activity) {
+
+        case 'plastic':
+          factor = 2.50;
+          break;
+
+        case 'paper':
+          factor = 1.00;
+          break;
+
+        case 'organic waste':
+          factor = 0.50;
+          break;
+
+        case 'general waste':
+          factor = 1.20;
+          break;
+
+        default:
+          factor = 1.00;
+      }
+    }
+
+    // =======================================================
+    // WATER USAGE
+    // =======================================================
+
+    else if (category === 'Water Usage') {
+
+      factor = 0.0003;
+    }
+
+    // =======================================================
+    // ONLINE SHOPPING
+    // =======================================================
+
+    else if (category === 'Online Shopping') {
+
+      switch (activity) {
+
+        case 'clothes':
+          factor = 20.0;
+          break;
+
+        case 'electronics':
+          factor = 50.0;
+          break;
+
+        case 'groceries':
+          factor = 1.5;
+          break;
+
+        default:
+          factor = 1.5;
+      }
+    }
+
+    // =======================================================
+    // TRAVEL ACTIVITIES
+    // =======================================================
+
+    else if (category === 'Travel Activities') {
+
+      switch (activity) {
+
+        case 'flight':
+        case 'plane':
+          factor = 0.255;
+          break;
+
+        case 'taxi':
+          factor = 0.21;
+          break;
+
+        default:
+          factor = 0.21;
+      }
+    }
+
+    return Math.round(
+      qty * factor * 100
+    ) / 100;
   }
 
-  submit() {
+  // =========================================================
+  // FORM
+  // =========================================================
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  readonly form = this.fb.group({
+
+    category: [
+      'Transportation',
+      Validators.required
+    ],
+
+    activity: [
+      '',
+      Validators.required
+    ],
+
+    quantity: [
+      1,
+      [
+        Validators.required,
+        Validators.min(0.1)
+      ]
+    ],
+
+    unit: [
+      'km'
+    ],
+
+    date: [
+      new Date().toISOString().slice(0, 10),
+      Validators.required
+    ],
+
+  });
+
+  // =========================================================
+  // FILTER
+  // =========================================================
+
+  setFilter(cat: string): void {
+
+    this.filter.set(cat);
+
+  }
+
+  // =========================================================
+  // CARBON ENGINE ESTIMATE
+  // =========================================================
+
+  calculateEngineEstimate(): void {
+
+    const activity =
+      this.form.value.activity?.trim();
+
+    const quantity =
+      Number(this.form.value.quantity);
+
+    const unit =
+      this.form.value.unit;
+
+    if (
+      !activity ||
+      !quantity ||
+      quantity <= 0
+    ) {
+
+      this.carbonEngineEstimate = null;
       return;
     }
 
-    const v = this.form.value;
+    const activityLower =
+      activity.toLowerCase();
 
-    const entry: CarbonEntry = {
-      id: 'c' + Math.random().toString(36).slice(2, 8),
-      date: v.date!,
-      category: v.category as CarbonEntry['category'],
-      activity: `${v.activity} — ${v.quantity} ${v.unit}`,
-      kgCo2e: this.estimatedKg(),
-    };
+    let activityType = '';
 
-    this.data.addCarbonEntry(entry);
+    if (
+      activityLower.includes('car') ||
+      activityLower.includes('auto')
+    ) {
 
-    const activity = {
-      category: v.category,
-      description: v.activity,
-      quantity: Number(v.quantity),
-      unit: v.unit,
-      carbonEmission: this.estimatedKg(),
-      activityDate: v.date,
+      activityType = 'car';
+
+    }
+
+    else if (
+      activityLower.includes('bike') ||
+      activityLower.includes('bicycle')
+    ) {
+
+      activityType = 'bike';
+
+    }
+
+    else if (
+      activityLower.includes('bus')
+    ) {
+
+      activityType = 'bus';
+
+    }
+
+    else if (
+      activityLower.includes('train') ||
+      activityLower.includes('metro')
+    ) {
+
+      activityType = 'train';
+
+    }
+
+    else if (
+      activityLower.includes('electricity') ||
+      activityLower.includes('electric')
+    ) {
+
+      activityType = 'electricity';
+
+    }
+
+    else if (
+      activityLower.includes('flight') ||
+      activityLower.includes('plane')
+    ) {
+
+      activityType = 'flight';
+
+    }
+
+    if (!activityType) {
+
+      this.carbonEngineEstimate = null;
+      return;
+    }
+
+    const request = {
+
+      activityType: activityType,
+
+      amount: quantity,
+
+      unit: unit || '',
+
       email: localStorage.getItem('email')
+
     };
 
-    this.carbonService.saveActivity(activity).subscribe({
+    this.carbonEngineService
+      .calculateCarbon(request)
+      .subscribe({
 
-      next: (response: any) => {
+        next: (result) => {
 
-        console.log("Activity Saved Successfully", response);
+          this.carbonEngineEstimate =
+            result.carbonKg;
 
-        this.ngOnInit();
-
-        this.form.patchValue({
-          activity: '',
-          quantity: 1
-        });
-
-        alert("Activity Saved Successfully");
-
-      },
-
-      error: (error: any) => {
-
-        console.error("Database Save Failed", error);
-
-        alert("Failed to Save Activity");
-
-      }
-
-    });
-
-  }
-
-  ngOnInit(): void {
-
-    const email = localStorage.getItem("email");
-
-    if (email) {
-
-      this.carbonService.getActivities(email).subscribe({
-
-        next: (data) => {
-
-          this.activityList = data;
-
-          console.log("Activities from DB:", data);
+          console.log(
+            'Carbon Engine Estimate:',
+            result
+          );
 
         },
 
-        error: (err) => {
+        error: (error) => {
 
-          console.error(err);
+          console.error(
+            'Carbon Engine Estimate Failed:',
+            error
+          );
+
+          this.carbonEngineEstimate = null;
 
         }
 
       });
 
+  }
+
+  // =========================================================
+  // DELETE ACTIVITY
+  // =========================================================
+
+ 
+  // =========================================================
+  // SUBMIT / SAVE ACTIVITY
+  // =========================================================
+
+  submit(): void {
+
+    if (this.form.invalid) {
+
+      this.form.markAllAsTouched();
+      return;
+
     }
+
+    const v = this.form.value;
+
+    // =======================================================
+    // LOCAL MOCK ENTRY
+    // =======================================================
+
+    const entry: CarbonEntry = {
+
+      id:
+        'c' +
+        Math.random()
+          .toString(36)
+          .slice(2, 8),
+
+      date: v.date!,
+
+      category:
+        v.category as CarbonEntry['category'],
+
+      activity:
+        `${v.activity} — ${v.quantity} ${v.unit}`,
+
+      kgCo2e:
+        this.estimatedKg(),
+
+    };
+
+    this.data.addCarbonEntry(entry);
+
+    // =======================================================
+    // DATABASE ACTIVITY
+    // =======================================================
+
+    const activity = {
+
+      category: v.category,
+
+      description: v.activity,
+
+      quantity:
+        Number(v.quantity),
+
+      unit: v.unit,
+
+      carbonEmission:
+        this.estimatedKg(),
+
+      activityDate: v.date,
+
+      email:
+        localStorage.getItem('email')
+
+    };
+
+    this.carbonService
+      .saveActivity(activity)
+      .subscribe({
+
+        next: (response: any) => {
+
+          console.log(
+            'Activity Saved Successfully',
+            response
+          );
+
+          // Reload activities from database
+          this.loadActivities();
+
+          this.form.patchValue({
+
+            activity: '',
+
+            quantity: 1
+
+          });
+
+          alert(
+            'Activity Saved Successfully'
+          );
+
+        },
+
+        error: (error: any) => {
+
+          console.error(
+            'Database Save Failed',
+            error
+          );
+
+          alert(
+            'Failed to Save Activity'
+          );
+
+        }
+
+      });
+
+  }
+
+  // =========================================================
+  // LOAD ACTIVITIES FROM DATABASE
+  // =========================================================
+
+  loadActivities(): void {
+
+    const email =
+      localStorage.getItem('email');
+
+    if (!email) {
+      return;
+    }
+
+    this.carbonService
+      .getActivities(email)
+      .subscribe({
+
+        next: (data) => {
+
+          this.activityList.set(data);
+
+          console.log(
+            'Activities from DB:',
+            data
+          );
+
+        },
+
+        error: (err) => {
+
+          console.error(
+            'Failed to load activities:',
+            err
+          );
+
+        }
+
+      });
+
+  }
+
+  // =========================================================
+  // ON INIT
+  // =========================================================
+
+  ngOnInit(): void {
+
+    this.loadActivities();
 
   }
 
