@@ -1,16 +1,17 @@
 package com.ecotrack.backend.dto;
 
-import com.ecotrack.backend.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
  * DTO returned to the client after any carbon entry operation.
- * Deliberately excludes the full User object to avoid exposing sensitive data.
+ * Includes the calculated carbon emission = quantity * emissionFactor.factorValue.
  */
 @Data
 @NoArgsConstructor
@@ -20,19 +21,29 @@ public class CarbonEntryResponse {
 
     private Long id;
 
-    /** ID of the user who owns this entry. */
+    /** Owner of the entry. */
     private Long userId;
 
-    private Category category;
+    /** The emission factor used. */
+    private Long emissionFactorId;
 
-    private String activity;
+    /** Human-readable category from the emission factor. */
+    private String category;
 
-    private Double value;
+    private BigDecimal quantity;
 
     private String unit;
 
-    /** Carbon emission in kg CO2 equivalent. */
-    private Double carbonEmission;
+    private LocalDate entryDate;
+
+    private String source;
+
+    private String notes;
+
+    /** Calculated CO2 emission = quantity × factorValue (kg CO2e). */
+    private BigDecimal carbonEmission;
 
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

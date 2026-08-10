@@ -1,17 +1,20 @@
 package com.ecotrack.backend.dto;
 
-import com.ecotrack.backend.entity.Category;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 /**
  * DTO for creating or updating a carbon entry.
- * Validation annotations ensure data integrity before reaching the service layer.
+ * The client supplies the emissionFactorId to link to the correct
+ * EmissionFactor record from the emission_factors table.
  */
 @Data
 @NoArgsConstructor
@@ -20,37 +23,37 @@ import lombok.NoArgsConstructor;
 public class CarbonEntryRequest {
 
     /**
-     * Category of the carbon-emitting activity.
-     * Example: TRANSPORT, FOOD, ELECTRICITY
+     * ID of the emission factor to use for this entry.
+     * The client can fetch available factors from GET /emission-factors.
      */
-    @NotNull(message = "Category is required")
-    private Category category;
+    @NotNull(message = "Emission factor ID is required")
+    private Long emissionFactorId;
 
     /**
-     * Human-readable description of the activity.
-     * Example: "Car ride to office", "Beef dinner"
+     * Quantity of the activity (e.g., 20 km, 5 kg, 300 kWh).
      */
-    @NotBlank(message = "Activity description is required")
-    private String activity;
+    @NotNull(message = "Quantity is required")
+    @Positive(message = "Quantity must be positive")
+    private BigDecimal quantity;
 
     /**
-     * Numeric amount of the activity.
-     * Example: 20 (km), 5 (kg), 100 (kWh)
-     */
-    @NotNull(message = "Value is required")
-    @Positive(message = "Value must be positive")
-    private Double value;
-
-    /**
-     * Unit of measurement for the value.
-     * Example: "km", "kg", "kWh"
+     * Unit of the quantity (e.g., "km", "kg", "kWh").
      */
     @NotBlank(message = "Unit is required")
     private String unit;
 
     /**
-     * Optional: pre-calculated carbon emission in kg CO2e.
-     * If not provided, the service will calculate it using a default emission factor.
+     * Date of the activity. Defaults to today if not provided.
      */
-    private Double carbonEmission;
+    private LocalDate entryDate;
+
+    /**
+     * Short description of the source activity (e.g., "Car", "Flight").
+     */
+    private String source;
+
+    /**
+     * Optional notes about this entry.
+     */
+    private String notes;
 }

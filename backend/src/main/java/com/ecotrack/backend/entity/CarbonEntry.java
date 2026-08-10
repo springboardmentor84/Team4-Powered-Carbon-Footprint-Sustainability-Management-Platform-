@@ -3,11 +3,17 @@ package com.ecotrack.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Entity representing a single carbon emission record logged by a user.
- * Maps to the "carbon_entries" table in PostgreSQL.
+ * Represents a single carbon footprint entry logged by a user.
+ * Maps to the "carbon_entries" table (04_carbon_entries.sql).
+ *
+ * Links to:
+ *  - User       (ManyToOne) — the owner of the entry
+ *  - EmissionFactor (ManyToOne) — the factor used to calculate CO2
  */
 @Entity
 @Table(name = "carbon_entries")
@@ -23,53 +29,63 @@ public class CarbonEntry {
     private Long id;
 
     /**
-     * The user who created this entry.
-     * LAZY fetch to avoid loading the full user object on every query.
+     * The user who logged this entry.
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /**
-     * Category of the carbon-emitting activity (e.g., TRANSPORT, FOOD).
-     * Stored as a STRING for human-readable database values.
+     * The emission factor used to calculate CO2 for this entry.
      */
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private Category category;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "emission_factor_id", nullable = false)
+    private EmissionFactor emissionFactor;
 
     /**
-     * Description of the specific activity (e.g., "Car ride", "Flight to NYC").
+     * Amount of the activity (e.g., 20 km, 5 kg).
      */
-    @Column(nullable = false, length = 255)
-    private String activity;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal quantity;
 
     /**
-     * Numeric value of the activity (e.g., 20 km, 5 kg of beef).
-     */
-    @Column(nullable = false)
-    private Double value;
-
-    /**
-     * Unit of the value (e.g., "km", "kg", "kWh").
+     * Unit of the quantity (e.g., "km", "kg", "kWh").
      */
     @Column(nullable = false, length = 50)
     private String unit;
 
     /**
-     * Calculated carbon emission in kg CO2 equivalent.
+     * Date of the activity.
      */
-    @Column(name = "carbon_emission", nullable = false)
-    private Double carbonEmission;
+    @Column(name = "entry_date", nullable = false)
+    private LocalDate entryDate;
 
     /**
-     * Timestamp of when this entry was created. Set automatically.
+     * Source/description of the activity (e.g., "Car", "Flight", "Beef").
      */
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(length = 100)
+    private String source;
+
+    /**
+     * Optional additional notes.
+     */
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
