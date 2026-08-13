@@ -43,22 +43,18 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Allow browser CORS preflight requests
-                        .requestMatchers(HttpMethod.OPTIONS, "/**")
-                        .permitAll()
-
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(
                                 "/auth/**",
                                 "/goals/**",
                                 "/carbon/**",
                                 "/carbon-engine/**",
                                 "/api/challenges/**"
-                        )
-                        .permitAll()
-                        
+                        ).permitAll()
 
-                        .anyRequest()
-                        .authenticated()
+                        .anyRequest().authenticated()
                 )
 
                 .userDetailsService(userDetailsService)

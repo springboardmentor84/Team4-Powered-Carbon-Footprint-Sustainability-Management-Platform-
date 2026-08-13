@@ -22,6 +22,51 @@ public class GoalService {
 	private final UserRepository userRepository;
 	private final GoalProgressRepository goalProgressRepository;
 
+	private String toDbStatus(String status) {
+		if (status == null) {
+			return "active";
+		}
+
+		switch (status.trim().toLowerCase()) {
+			case "not started":
+			case "on track":
+			case "at risk":
+			case "active":
+				return "active";
+			case "achieved":
+			case "completed":
+				return "completed";
+			case "cancelled":
+				return "cancelled";
+			default:
+				return "active";
+		}
+	}
+
+	private String toDisplayStatus(String status) {
+		if (status == null) {
+			return "Not Started";
+		}
+
+		switch (status.trim().toLowerCase()) {
+			case "active":
+				return "On Track";
+			case "completed":
+				return "Achieved";
+			case "cancelled":
+				return "At Risk";
+			default:
+				return "Not Started";
+		}
+	}
+
+	private Goal applyDisplayStatus(Goal goal) {
+		if (goal != null) {
+			goal.setStatus(toDisplayStatus(goal.getStatus()));
+		}
+		return goal;
+	}
+
 	// Save Goal
 	public Goal saveGoal(GoalRequest request) {
 
@@ -36,11 +81,11 @@ public class GoalService {
 				.unit(request.getUnit())
 				.startDate(request.getStartDate())
 				.endDate(request.getEndDate())
-				.status(request.getStatus())
+				.status(toDbStatus(request.getStatus()))
 				.user(user)
 				.build();
 
-		return goalRepository.save(goal);
+		return applyDisplayStatus(goalRepository.save(goal));
 	}
 
 	// Get Logged-in User Goals
@@ -49,7 +94,9 @@ public class GoalService {
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
-		return goalRepository.findByUser(user);
+		return goalRepository.findByUser(user).stream()
+				.map(this::applyDisplayStatus)
+				.toList();
 	}
 
 	// Update Goal Progress (simple currentKg update)
@@ -61,19 +108,19 @@ public class GoalService {
 		goal.setCurrentKg(currentKg);
 
 		if (currentKg == 0) {
-			goal.setStatus("Not Started");
+			goal.setStatus("active");
 		} else if (goal.getTargetKg() != null && currentKg >= goal.getTargetKg()) {
-			goal.setStatus("Achieved");
+			goal.setStatus("completed");
 		} else {
-			goal.setStatus("On Track");
+			goal.setStatus("active");
 		}
 
-		return goalRepository.save(goal);
+		return applyDisplayStatus(goalRepository.save(goal));
 	}
 
 	public Goal getGoalById(Long id) {
-		return goalRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Goal not found"));
+		return applyDisplayStatus(goalRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Goal not found")));
 	}
 
 	public void deleteGoal(Long id){
@@ -103,11 +150,11 @@ public class GoalService {
 			Double newKg = progress.getProgressValue().doubleValue();
 			goal.setCurrentKg(newKg);
 			if (goal.getTargetKg() != null && newKg >= goal.getTargetKg()) {
-				goal.setStatus("Achieved");
+				goal.setStatus("completed");
 			} else if (newKg == 0) {
-				goal.setStatus("Not Started");
+				goal.setStatus("active");
 			} else {
-				goal.setStatus("On Track");
+				goal.setStatus("active");
 			}
 			goalRepository.save(goal);
 		} catch (Exception ignored) {
