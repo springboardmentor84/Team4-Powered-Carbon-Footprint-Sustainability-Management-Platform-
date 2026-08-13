@@ -11,6 +11,11 @@ import { CarbonService } from '../../services/carbon.service';
 import { CarbonEngineService } from '../../services/carbon-engine.service';
 import { CarbonEntry } from '../../models/data.model';
 
+import {
+  FilterGroup,
+  SearchFilterBarComponent
+} from '../shared/search-filter-bar/search-filter-bar.component';
+
 const CATEGORIES: CarbonEntry['category'][] = [
   'Transportation',
   'Electricity Usage',
@@ -36,7 +41,13 @@ const EMISSION_FACTORS: Record<string, number> = {
 @Component({
   selector: 'eco-carbon-tracker',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SearchFilterBarComponent
+  ],
+
   templateUrl: './carbon-tracker.component.html',
   styleUrl: './carbon-tracker.component.css',
 })
@@ -56,22 +67,66 @@ export class CarbonTrackerComponent implements OnInit {
   carbonEngineEstimate: number | null = null;
 
   // =========================================================
+  // SEARCH + FILTER
+  // =========================================================
+
+  readonly searchValue = signal('');
+
+  readonly activeFilters = signal<Record<string, string>>({
+    category: 'All'
+  });
+
+  readonly filterGroups: FilterGroup[] = [
+    {
+      key: 'category',
+      label: 'Category',
+      options: [
+        { label: 'All', value: 'All' },
+        ...CATEGORIES.map(category => ({
+          label: category,
+          value: category
+        }))
+      ]
+    }
+  ];
+
+  // =========================================================
   // FILTER DATABASE ACTIVITIES
   // =========================================================
 
   readonly filteredActivityList = computed(() => {
 
-    const selected = this.filter();
     const activities = this.activityList();
 
-    if (selected === 'All') {
-      return activities;
-    }
+    const search = this.searchValue()
+      .trim()
+      .toLowerCase();
 
-    return activities.filter(
-      activity => activity.category === selected
-    );
+    const category =
+  this.activeFilters()['category'] || 'All';
 
+    return activities.filter(activity => {
+
+      const matchesCategory =
+        category === 'All' ||
+        activity.category === category;
+
+      const matchesSearch =
+        !search ||
+        String(activity.category || '')
+          .toLowerCase()
+          .includes(search) ||
+
+        String(activity.description || '')
+          .toLowerCase()
+          .includes(search) ||
+
+        String(activity.activityDate || '')
+          .toLowerCase()
+          .includes(search);
+
+      return matchesCategory && matchesSearch;
+    });
   });
 
   // =========================================================
@@ -87,12 +142,12 @@ export class CarbonTrackerComponent implements OnInit {
   readonly filteredEntries = computed(() => {
 
     const f = this.filter();
+
     const list = this.entries();
 
     return f === 'All'
       ? list
       : list.filter((e) => e.category === f);
-
   });
 
   readonly totalKg = computed(() =>
@@ -366,6 +421,44 @@ export class CarbonTrackerComponent implements OnInit {
 
     this.filter.set(cat);
 
+    this.activeFilters.update(filters => ({
+      ...filters,
+      category: cat
+    }));
+  }
+
+  // =========================================================
+  // SEARCH FILTER BAR
+  // =========================================================
+
+  onSearchChange(value: string): void {
+
+    this.searchValue.set(value);
+  }
+
+  onFilterChange(
+    event: { key: string; value: string }
+  ): void {
+
+    this.activeFilters.update(filters => ({
+      ...filters,
+      [event.key]: event.value
+    }));
+
+    if (event.key === 'category') {
+      this.filter.set(event.value);
+    }
+  }
+
+  clearFilters(): void {
+
+    this.searchValue.set('');
+
+    this.activeFilters.set({
+      category: 'All'
+    });
+
+    this.filter.set('All');
   }
 
   // =========================================================
@@ -504,7 +597,6 @@ export class CarbonTrackerComponent implements OnInit {
   // DELETE ACTIVITY
   // =========================================================
 
- 
   // =========================================================
   // SUBMIT / SAVE ACTIVITY
   // =========================================================

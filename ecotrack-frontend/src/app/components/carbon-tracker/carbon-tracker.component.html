@@ -73,15 +73,21 @@
     </form>
 
     <div class="eco-card history">
-      <div class="history__header">
-        <h3>Activity history</h3>
-        <div class="chips">
-          <button class="chip" [class.chip--active]="filter() === 'All'" (click)="setFilter('All')">All</button>
-          @for (cat of categories; track cat) {
-            <button class="chip" [class.chip--active]="filter() === cat" (click)="setFilter(cat)">{{ cat }}</button>
-          }
-        </div>
-      </div>
+     <div class="history__header">
+  <h3>Activity history</h3>
+</div>
+
+<eco-search-filter-bar
+  placeholder="Search activities..."
+  [searchValue]="searchValue()"
+  [filterGroups]="filterGroups"
+  [activeFilters]="activeFilters()"
+  [resultCount]="filteredActivityList().length"
+  [totalCount]="activityList().length"
+  (searchChange)="onSearchChange($event)"
+  (filterChange)="onFilterChange($event)"
+  (clearAll)="clearFilters()">
+</eco-search-filter-bar>
 
       <table class="table">
         <thead>

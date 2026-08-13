@@ -65,11 +65,14 @@
             cy="60"
             r="54"
             fill="none"
-            stroke="#d68c45"
+            stroke="#84a98c"
             stroke-width="9"
             stroke-linecap="round"
             [attr.stroke-dasharray]="2 * 3.14159 * 54"
-            [attr.stroke-dashoffset]="0"
+            [attr.stroke-dashoffset]="
+            (2 * 3.14159 * 54) -
+            (ecoScore() / 1000) * (2 * 3.14159 * 54)
+            "
             transform="rotate(-90 60 60)"/>
 
           <circle
@@ -88,8 +91,7 @@
 
           <span class="ring__value eco-mono">
 
-            {{ achievedGoals() * 100 }}
-
+           {{ ecoScore() }}
           </span>
 
           <span class="ring__label">
@@ -111,6 +113,24 @@
     </div>
 
   </section>
+ 
+<!-- Sustainability Insight -->
+<section class="eco-card insight-card">
+
+  <div class="insight-icon">
+    {{ sustainabilityInsight().icon }}
+  </div>
+
+  <div class="insight-content">
+    <span class="eco-eyebrow">SUSTAINABILITY INSIGHT</span>
+
+    <h3>{{ sustainabilityInsight().title }}</h3>
+
+    <p>{{ sustainabilityInsight().message }}</p>
+  </div>
+
+</section>
+
 
   <section class="grid-3">
 
