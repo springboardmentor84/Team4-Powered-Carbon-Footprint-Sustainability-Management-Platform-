@@ -8,7 +8,11 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "EcoTrack Backend is Running Successfully!";
+        return "EcoTrack Backend Running Successfully!";
     }
 
+    @GetMapping("/health")
+    public String health() {
+        return "Application is Healthy";
+    }
 }

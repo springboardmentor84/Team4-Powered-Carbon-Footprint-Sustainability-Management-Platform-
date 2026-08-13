@@ -1,1 +1,7 @@
--- Stores monthly or periodic eco scores for users.
+CREATE TABLE eco_scores (
+	score_id SERIAL PRIMARY KEY,
+	user_id INTEGER NOT NULL REFERENCES users(id),
+	score NUMERIC(10,2) NOT NULL,
+	period DATE NOT NULL,
+	calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
