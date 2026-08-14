@@ -352,30 +352,30 @@
 
             </div>
 
-            <strong class="goal-percent">
-              {{ goal.progress || 0 }}%
-            </strong>
-
+           <strong class="goal-percent">
+  {{ goal.targetKg ? ((goal.currentKg / goal.targetKg) * 100 | number:'1.0-0') : 0 }}%
+</strong>
           </div>
 
           <!-- Progress Bar -->
           <div class="goal-track">
 
             <div
-              class="goal-fill"
-              [style.width.%]="goal.progress || 0">
-            </div>
-
+  class="goal-fill"
+  [style.width.%]="
+    goal.targetKg
+      ? Math.min(100, (goal.currentKg / goal.targetKg) * 100)
+      : 0
+  ">
+</div>
           </div>
 
           <!-- Goal Details -->
           <div class="goal-bottom">
 
-            <span>
-              Target:
-              {{ goal.target || goal.targetValue || 0 }}
-            </span>
-
+          <span>
+  Target: {{ goal.targetKg || 0 }} {{ goal.unit }}
+</span>
             <span
               [class.goal-achieved]="goal.status === 'Achieved'">
 

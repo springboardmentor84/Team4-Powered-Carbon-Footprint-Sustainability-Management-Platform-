@@ -20,6 +20,7 @@ import {
  */
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
+  readonly currentEcoScore = signal<number>(742);
   private readonly user = signal<UserProfile>({
     id: 'u-1024',
     name: 'Asha Mehta',
@@ -32,7 +33,6 @@ export class MockDataService {
     interests: ['Renewable Energy', 'Green Transportation', 'Waste Reduction', 'Water Conservation'],
     avatarInitials: 'AM',
   });
-
   private readonly carbonEntries = signal<CarbonEntry[]>([
     { id: 'c1', date: '2026-07-26', category: 'Transportation', activity: 'Car commute — 18 km', kgCo2e: 3.8 },
     { id: 'c2', date: '2026-07-26', category: 'Electricity Usage', activity: 'Home usage — 6.2 kWh', kgCo2e: 2.9 },

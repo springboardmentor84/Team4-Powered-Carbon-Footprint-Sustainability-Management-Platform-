@@ -103,7 +103,7 @@ export class CarbonTrackerComponent implements OnInit {
       .toLowerCase();
 
     const category =
-  this.activeFilters()['category'] || 'All';
+      this.activeFilters()['category'] || 'All';
 
     return activities.filter(activity => {
 
@@ -446,6 +446,7 @@ export class CarbonTrackerComponent implements OnInit {
     }));
 
     if (event.key === 'category') {
+
       this.filter.set(event.value);
     }
   }
@@ -497,7 +498,6 @@ export class CarbonTrackerComponent implements OnInit {
     ) {
 
       activityType = 'car';
-
     }
 
     else if (
@@ -506,7 +506,6 @@ export class CarbonTrackerComponent implements OnInit {
     ) {
 
       activityType = 'bike';
-
     }
 
     else if (
@@ -514,7 +513,6 @@ export class CarbonTrackerComponent implements OnInit {
     ) {
 
       activityType = 'bus';
-
     }
 
     else if (
@@ -523,7 +521,6 @@ export class CarbonTrackerComponent implements OnInit {
     ) {
 
       activityType = 'train';
-
     }
 
     else if (
@@ -532,7 +529,6 @@ export class CarbonTrackerComponent implements OnInit {
     ) {
 
       activityType = 'electricity';
-
     }
 
     else if (
@@ -541,7 +537,6 @@ export class CarbonTrackerComponent implements OnInit {
     ) {
 
       activityType = 'flight';
-
     }
 
     if (!activityType) {
@@ -559,14 +554,13 @@ export class CarbonTrackerComponent implements OnInit {
       unit: unit || '',
 
       email: localStorage.getItem('email')
-
     };
 
     this.carbonEngineService
       .calculateCarbon(request)
       .subscribe({
 
-        next: (result) => {
+        next: (result: any) => {
 
           this.carbonEngineEstimate =
             result.carbonKg;
@@ -575,10 +569,9 @@ export class CarbonTrackerComponent implements OnInit {
             'Carbon Engine Estimate:',
             result
           );
-
         },
 
-        error: (error) => {
+        error: (error: any) => {
 
           console.error(
             'Carbon Engine Estimate Failed:',
@@ -586,16 +579,101 @@ export class CarbonTrackerComponent implements OnInit {
           );
 
           this.carbonEngineEstimate = null;
-
         }
 
       });
-
   }
 
   // =========================================================
   // DELETE ACTIVITY
   // =========================================================
+
+  deleteActivity(id: number): void {
+
+    const email =
+      localStorage.getItem('email');
+
+    if (!email) {
+
+      alert(
+        'User email not found. Please login again.'
+      );
+
+      return;
+    }
+
+    const confirmed = confirm(
+      'Are you sure you want to delete this activity?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    console.log(
+      'Deleting activity:',
+      id,
+      'Email:',
+      email
+    );
+
+    this.carbonService
+      .deleteActivity(id, email)
+      .subscribe({
+
+        next: () => {
+
+          console.log(
+            'Activity deleted successfully'
+          );
+
+          // Remove immediately from screen
+          this.activityList.update(
+            activities =>
+              activities.filter(
+                activity =>
+                  activity.id !== id
+              )
+          );
+
+          alert(
+            'Activity deleted successfully'
+          );
+
+          // Reload from database
+          this.loadActivities();
+        },
+
+        error: (error: any) => {
+
+          console.error(
+            'Delete Activity Failed:',
+            error
+          );
+
+          console.error(
+            'Status:',
+            error.status
+          );
+
+          console.error(
+            'Backend Error:',
+            error.error
+          );
+
+          alert(
+            'Delete failed.\nStatus: ' +
+            error.status +
+            '\n' +
+            (
+              error.error ||
+              'Unable to delete activity'
+            )
+          );
+        }
+
+      });
+  }
 
   // =========================================================
   // SUBMIT / SAVE ACTIVITY
@@ -606,8 +684,8 @@ export class CarbonTrackerComponent implements OnInit {
     if (this.form.invalid) {
 
       this.form.markAllAsTouched();
-      return;
 
+      return;
     }
 
     const v = this.form.value;
@@ -686,10 +764,11 @@ export class CarbonTrackerComponent implements OnInit {
 
           });
 
+          this.carbonEngineEstimate = null;
+
           alert(
             'Activity Saved Successfully'
           );
-
         },
 
         error: (error: any) => {
@@ -702,11 +781,9 @@ export class CarbonTrackerComponent implements OnInit {
           alert(
             'Failed to Save Activity'
           );
-
         }
 
       });
-
   }
 
   // =========================================================
@@ -726,7 +803,7 @@ export class CarbonTrackerComponent implements OnInit {
       .getActivities(email)
       .subscribe({
 
-        next: (data) => {
+        next: (data: any[]) => {
 
           this.activityList.set(data);
 
@@ -734,20 +811,17 @@ export class CarbonTrackerComponent implements OnInit {
             'Activities from DB:',
             data
           );
-
         },
 
-        error: (err) => {
+        error: (error: any) => {
 
           console.error(
             'Failed to load activities:',
-            err
+            error
           );
-
         }
 
       });
-
   }
 
   // =========================================================
@@ -757,7 +831,6 @@ export class CarbonTrackerComponent implements OnInit {
   ngOnInit(): void {
 
     this.loadActivities();
-
   }
 
 }

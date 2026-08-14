@@ -1,10 +1,11 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { CarbonService } from '../../services/carbon.service';
 import { GoalService } from '../../services/goal.service';
 import { CarbonChartComponent } from '../carbon-chart/carbon-chart.component';
+import { MockDataService } from '../../services/mock-data.service';
 
 @Component({
   selector: 'eco-dashboard',
@@ -21,7 +22,8 @@ export class DashboardComponent implements OnInit {
 
   private carbonService = inject(CarbonService);
   private goalService = inject(GoalService);
-
+  private data = inject(MockDataService);
+readonly Math = Math;
   username = "";
 
   readonly activityList = signal<any[]>([]);
@@ -74,6 +76,9 @@ export class DashboardComponent implements OnInit {
     Math.round(goalScore + activityScore + carbonScore),
     1000
   );
+});
+private syncEcoScore = effect(() => {
+  this.data.currentEcoScore.set(this.ecoScore());
 });
 readonly sustainabilityInsight = computed(() => {
   const carbon = this.totalCarbon();

@@ -17,6 +17,7 @@ interface NavLink {
   styleUrl: './nav.component.css',
 })
 export class NavComponent {
+
   private data = inject(MockDataService);
   private auth = inject(AuthService);
 
@@ -30,7 +31,11 @@ export class NavComponent {
   ];
 
   readonly menuOpen = signal(false);
+
   readonly user = this.data.getUser();
+
+  // Current Eco Score
+  readonly currentEcoScore = this.data.currentEcoScore;
 
   readonly isLoggedIn = this.auth.isLoggedIn;
   readonly loggedInName = this.auth.userName;

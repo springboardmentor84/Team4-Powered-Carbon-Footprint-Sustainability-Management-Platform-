@@ -100,6 +100,14 @@
       <td>{{ e.category }}</td>
       <td>{{ e.description }}</td>
       <td class="right">{{ e.carbonEmission }} kg CO₂e</td>
+      <td>
+  <button
+    type="button"
+    class="delete-btn"
+    (click)="deleteActivity(e.id)">
+    ❌
+  </button>
+</td>
 
     </tr>
   } @empty {

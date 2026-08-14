@@ -65,3 +65,27 @@
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
 }
+.delete-btn {
+  background: #fff5f5;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+}
+
+.delete-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
