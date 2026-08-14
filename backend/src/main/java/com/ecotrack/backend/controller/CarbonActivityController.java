@@ -12,14 +12,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/carbon")
 @RequiredArgsConstructor
-
+@CrossOrigin(origins = "http://localhost:4200")
 public class CarbonActivityController {
 
     private final CarbonActivityService carbonActivityService;
 
-    // Save Activity
+    // Add activity
     @PostMapping("/add")
-    public ResponseEntity<CarbonActivity> saveActivity(
+    public ResponseEntity<CarbonActivity> addActivity(
             @RequestBody CarbonActivityRequest request) {
 
         return ResponseEntity.ok(
@@ -27,7 +27,7 @@ public class CarbonActivityController {
         );
     }
 
-    // Get User Activities
+    // Get user's activities
     @GetMapping("/user/{email}")
     public ResponseEntity<List<CarbonActivity>> getUserActivities(
             @PathVariable String email) {
@@ -36,13 +36,13 @@ public class CarbonActivityController {
                 carbonActivityService.getUserActivities(email)
         );
     }
-    // Delete Activity
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteActivity(
-            @PathVariable Long id,
-            @RequestParam String email) {
 
-        carbonActivityService.deleteActivity(id, email);
+    // Delete activity
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteActivity(
+            @PathVariable Long id) {
+
+        carbonActivityService.deleteActivity(id);
 
         return ResponseEntity.ok("Activity deleted successfully");
     }
