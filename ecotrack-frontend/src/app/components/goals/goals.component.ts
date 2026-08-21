@@ -1,81 +1,125 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MockDataService } from '../../services/mock-data.service';
 import { SustainabilityGoal } from '../../models/data.model';
-import { FilterGroup, SearchFilterBarComponent } from '../shared/search-filter-bar/search-filter-bar.component';
-
-const STATUSES: SustainabilityGoal['status'][] = ['On Track', 'At Risk', 'Achieved', 'Not Started'];
+import { FormsModule } from '@angular/forms';
+import { GoalService } from '../../services/goal.service';
+import { Goal } from '../../models/goal.model';
 
 @Component({
   selector: 'eco-goals',
   standalone: true,
-  imports: [CommonModule, SearchFilterBarComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './goals.component.html',
   styleUrl: './goals.component.css',
 })
-export class GoalsComponent {
+export class GoalsComponent implements OnInit {
+
+  readonly Math = Math;
+
   private data = inject(MockDataService);
+  private goalService = inject(GoalService);
 
-  readonly goals = this.data.getGoals();
+  // Popup control
+  showGoalForm = false;
+  goal: Goal = {
+    title: '',
+    type: '',
+    targetKg: 0,
+    currentKg: 0,
+    unit: '',
+    startDate: '',
+    endDate: '',
+    status: 'Not Started',
+    email: ''
+  };
+  goalList: any[] = [];
 
-  // --- Search & filter state ---
-  readonly search = signal('');
-  readonly statusFilter = signal('All');
+  // Gamification: which goal/task is currently selected to reveal its XP progress.
+  selectedGoalId: number | null = null;
 
-  readonly filterGroups: FilterGroup[] = [
-    {
-      key: 'status',
-      label: 'Status',
-      options: [
-        { label: 'All statuses', value: 'All' },
-        ...STATUSES.map((s) => ({ label: s, value: s })),
-      ],
-    },
-  ];
-
-  readonly activeFilters = computed(() => ({ status: this.statusFilter() }));
-
-  readonly filteredGoals = computed(() => {
-    const q = this.search().toLowerCase().trim();
-    const status = this.statusFilter();
-    return this.goals().filter((g) => {
-      const matchesStatus = status === 'All' || g.status === status;
-      const matchesSearch =
-        !q || g.title.toLowerCase().includes(q) || g.type.toLowerCase().includes(q);
-      return matchesStatus && matchesSearch;
-    });
-  });
-
-  onSearchChange(value: string) {
-    this.search.set(value);
+  selectGoal(goal: any) {
+    this.selectedGoalId = this.selectedGoalId === goal.id ? null : goal.id;
   }
 
-  onFilterChange(change: { key: string; value: string }) {
-    if (change.key === 'status') this.statusFilter.set(change.value);
+  goalXpTotal(goal: any): number {
+    return this.data.goalXpTotal(goal);
   }
 
-  clearFilters() {
-    this.search.set('');
-    this.statusFilter.set('All');
+  goalXpEarned(goal: any): number {
+    return this.data.goalXpEarned(goal);
   }
 
-  readonly summary = computed(() => {
-    const list = this.goals();
+  get summary() {
     return {
-      total: list.length,
-      achieved: list.filter((g) => g.status === 'Achieved').length,
-      onTrack: list.filter((g) => g.status === 'On Track').length,
-      atRisk: list.filter((g) => g.status === 'At Risk').length,
+      total: this.goalList.length,
+      achieved: this.goalList.filter(g => g.status === 'Achieved').length,
+      onTrack: this.goalList.filter(g => g.status === 'On Track').length,
+      atRisk: this.goalList.filter(g => g.status === 'At Risk').length,
     };
-  });
-
-  progressPct(goal: SustainabilityGoal): number {
-    return Math.min(100, Math.round((goal.current / goal.target) * 100));
   }
 
-  bump(goal: SustainabilityGoal) {
-    const next = Math.min(goal.target, goal.current + Math.max(1, Math.round(goal.target * 0.1)));
-    this.data.updateGoalProgress(goal.id, next);
+  openGoalForm() {
+    this.showGoalForm = true;
+  }
+
+  closeGoalForm() {
+    this.showGoalForm = false;
+  }
+
+  progressPct(goal: Goal): number {
+
+  const current = Number(goal.currentKg) || 0;
+  const target = Number(goal.targetKg) || 0;
+
+  if (target <= 0) {
+    return 0;
+  }
+
+  const percentage = (current / target) * 100;
+
+  return Math.min(100, Math.max(0, Math.round(percentage)));
+}
+
+  bump(goal: any) {
+    const value = prompt(
+      "Enter Current Progress",
+      goal.currentKg
+    );
+
+    if (value == null) return;
+
+    const newValue = Number(value);
+
+    // Validation
+    if (isNaN(newValue)) {
+      alert("Please enter a valid number.");
+      return;
+    }
+
+    if (newValue < 0) {
+      alert("Progress cannot be negative.");
+      return;
+    }
+
+    if (newValue > goal.targetKg) {
+      alert("Progress cannot exceed the target.");
+      return;
+    }
+
+    this.goalService.updateProgress(
+      goal.id,
+      newValue
+    ).subscribe({
+      next: () => {
+        this.ngOnInit();
+        alert("Progress Updated Successfully");
+      },
+      error: (err) => {
+        console.error(err);
+        alert("Update Failed");
+      }
+    });
   }
 
   statusClass(status: SustainabilityGoal['status']): string {
@@ -85,5 +129,55 @@ export class GoalsComponent {
       Achieved: 'status--achieved',
       'Not Started': 'status--notstarted',
     }[status];
+  }
+
+  saveGoal() {
+    this.goal.currentKg = 0;
+    this.goal.startDate = new Date().toISOString().split('T')[0];
+    this.goal.status = "Not Started";
+    this.goal.email = localStorage.getItem("email") || "";
+
+    this.goalService.saveGoal(this.goal).subscribe({
+      next: () => {
+        alert("Goal Saved Successfully");
+        this.closeGoalForm();
+        this.ngOnInit();
+      },
+    });
+  }
+
+  ngOnInit(): void {
+    const email = localStorage.getItem("email");
+
+    if (email) {
+      this.goalService.getGoals(email).subscribe({
+        next: (data) => {
+          this.goalList = data;
+          console.log("Goals from DB:", data);
+          // Gamification: award task XP + badge the first time a goal is Achieved.
+          this.goalList.forEach((g) => this.data.recordGoalCompletion(g));
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  deleteGoal(id: number) {
+    if (confirm("Are you sure you want to delete this goal?")) {
+      this.goalService.deleteGoal(id).subscribe({
+        next: () => {
+          alert("Goal Deleted Successfully");
+          this.ngOnInit();
+        },
+        error: (err) => {
+          console.log("Status:", err.status);
+          console.log("Error:", err.error);
+          console.log("Full Error:", err);
+          alert("Delete Failed");
+        }
+      });
+    }
   }
 }

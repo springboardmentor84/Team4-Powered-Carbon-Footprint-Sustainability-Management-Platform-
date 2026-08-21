@@ -89,27 +89,46 @@ button {
 }
 .eco-btn:hover { transform: translateY(-1px); }
 
-.eco-btn--primary {
-  background: var(--pine-700);
-  color: var(--white);
-  border: 1px solid var(--moss-300);
+.eco-btn--primary,
+.eco-btn--ghost {
+  background: #fffdf7;
+  color: var(--pine-700);
+  border: 2px solid var(--pine-700);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 3px 0 var(--pine-700);
+  transition: all 0.2s ease;
 }
-.eco-btn--primary:hover { background: var(--pine-800); }
+
+.eco-btn--primary:hover,
+.eco-btn--ghost:hover {
+  background: var(--pine-700);
+  color: white;
+  border-color: var(--pine-700);
+  box-shadow: 0 1px 0 var(--pine-700);
+  transform: translateY(2px);
+}
 
 .eco-btn--amber {
   background: var(--amber-500);
   color: var(--white);
 }
-
 .eco-btn--amber:hover { background: var(--amber-600); }
 
 .eco-btn--ghost {
-  background: transparent;
-  color: var(--white);
-  border: 1px solid var(--moss-300);
+  background: var(--pine-700);
+  color: white;
+  border: 1px solid var(--pine-700);
+  transition: all 0.2s ease;
 }
 
-
+.eco-btn--ghost:hover {
+  background: white;
+  color: var(--pine-700);
+  border-color: var(--pine-700);
+}
 .eco-tag {
   display: inline-block;
   padding: 3px 10px;

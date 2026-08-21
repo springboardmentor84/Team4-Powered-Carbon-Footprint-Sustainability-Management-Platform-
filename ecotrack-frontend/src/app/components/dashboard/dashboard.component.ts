@@ -1,73 +1,160 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+
+import { CarbonService } from '../../services/carbon.service';
+import { GoalService } from '../../services/goal.service';
+import { CarbonChartComponent } from '../carbon-chart/carbon-chart.component';
 import { MockDataService } from '../../services/mock-data.service';
 
 @Component({
   selector: 'eco-dashboard',
   standalone: true,
-  imports: [DecimalPipe, RouterLink],
+  imports: [
+  DecimalPipe,
+  RouterLink,
+  CarbonChartComponent
+],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+
+  private carbonService = inject(CarbonService);
+  private goalService = inject(GoalService);
   private data = inject(MockDataService);
+readonly Math = Math;
+  username = "";
 
-  readonly user = this.data.getUser();
-  readonly entries = this.data.getCarbonEntries();
-  readonly goals = this.data.getGoals();
-  readonly challenges = this.data.getChallenges();
-  readonly recommendations = this.data.getRecommendations();
-  readonly badges = this.data.getBadges();
-  readonly leaderboard = this.data.getLeaderboard();
+  readonly activityList = signal<any[]>([]);
+  readonly goalList = signal<any[]>([]);
 
-  readonly weekTotalKg = computed(() =>
-    this.entries().reduce((sum, e) => sum + e.kgCo2e, 0)
+  readonly totalCarbon = computed(() =>
+    this.activityList().reduce(
+      (sum: number, a: any) => sum + Number(a.carbonEmission),
+      0
+    )
   );
 
-  readonly categoryBreakdown = computed(() => {
-    const totals = new Map<string, number>();
-    for (const e of this.entries()) {
-      totals.set(e.category, (totals.get(e.category) ?? 0) + e.kgCo2e);
-    }
-    const max = Math.max(...Array.from(totals.values()), 1);
-    return Array.from(totals.entries())
-      .map(([category, kg]) => ({ category, kg, pct: (kg / max) * 100 }))
-      .sort((a, b) => b.kg - a.kg);
-  });
-
-  readonly goalsOnTrack = computed(
-    () => this.goals().filter((g) => g.status === 'On Track' || g.status === 'Achieved').length
+  readonly activeGoals = computed(() =>
+    this.goalList().filter((g: any) => g.status !== "Achieved").length
   );
 
-  readonly activeChallenges = computed(() => this.challenges().filter((c) => c.joined));
+  readonly achievedGoals = computed(() =>
+    this.goalList().filter((g: any) => g.status === "Achieved").length
+  );
+  readonly ecoScore = computed(() => {
+  const goals = this.goalList();
+  const activities = this.activityList();
 
-  readonly ringOffset = computed(() => {
-    const circumference = 2 * Math.PI * 54;
-    return circumference - (circumference * this.user().ecoScore) / 1000;
-  });
+  if (goals.length === 0 && activities.length === 0) {
+    return 0;
+  }
 
-  /** Daily emissions totals, oldest → newest, for the trend sparkline. */
-  readonly dailyTrend = computed(() => {
-    const totals = new Map<string, number>();
-    for (const e of this.entries()) {
-      totals.set(e.date, (totals.get(e.date) ?? 0) + e.kgCo2e);
-    }
-    const rows = Array.from(totals.entries())
-      .map(([date, kg]) => ({ date, kg }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-    const max = Math.max(...rows.map((r) => r.kg), 1);
-    return rows.map((r) => ({ ...r, pct: (r.kg / max) * 100 }));
-  });
+  // Goal completion contribution: maximum 600 points
+  const goalScore =
+    goals.length > 0
+      ? (this.achievedGoals() / goals.length) * 600
+      : 0;
 
-  readonly communityAverage = computed(() => {
-    const list = this.leaderboard();
-    if (!list.length) return 0;
-    return Math.round(list.reduce((sum, l) => sum + l.ecoScore, 0) / list.length);
-  });
+  // Activity contribution: maximum 200 points
+  const activityScore = Math.min(
+    activities.length * 20,
+    200
+  );
 
-  readonly vsAverage = computed(() => this.user().ecoScore - this.communityAverage());
+  // Carbon activity contribution: maximum 200 points
+  const carbonScore =
+    activities.length > 0
+      ? Math.max(
+          0,
+          200 - this.totalCarbon() * 2
+        )
+      : 0;
 
-  readonly earnedBadges = computed(() => this.badges().filter((b) => b.earned));
-  readonly nextBadge = computed(() => this.badges().find((b) => !b.earned));
+  return Math.min(
+    Math.round(goalScore + activityScore + carbonScore),
+    1000
+  );
+});
+private syncEcoScore = effect(() => {
+  this.data.currentEcoScore.set(this.ecoScore());
+});
+readonly sustainabilityInsight = computed(() => {
+  const carbon = this.totalCarbon();
+  const activities = this.activityList().length;
+
+  if (activities === 0) {
+    return {
+      icon: '🌱',
+      title: 'Start your green journey',
+      message: 'Log your first activity to start tracking your carbon footprint.'
+    };
+  }
+
+  if (carbon <= 20) {
+    return {
+      icon: '🌿',
+      title: 'Great work!',
+      message: 'Your carbon footprint is looking good. Keep making sustainable choices.'
+    };
+  }
+
+  if (carbon <= 50) {
+    return {
+      icon: '🌱',
+      title: 'You are on the right track',
+      message: 'Your footprint is moderate. Try reducing high-carbon activities.'
+    };
+  }
+ 
+  return {
+    icon: '💚',
+    title: "Let's reduce your footprint",
+    message: 'Consider choosing greener transportation, saving electricity, and reducing waste.'
+  };
+});
+
+  ngOnInit(): void {
+
+    const email = localStorage.getItem("email");
+
+    if (!email) return;
+
+    this.username = email.split("@")[0];
+
+    this.carbonService.getActivities(email).subscribe({
+
+      next: (data: any[]) => {
+
+        this.activityList.set(data);
+
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+      }
+
+    });
+
+    this.goalService.getGoals(email).subscribe({
+
+      next: (data: any[]) => {
+
+        this.goalList.set(data);
+
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+      }
+
+    });
+
+  }
+
 }

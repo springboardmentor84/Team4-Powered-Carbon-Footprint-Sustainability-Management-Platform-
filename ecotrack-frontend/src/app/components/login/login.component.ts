@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -9,19 +9,19 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
-  readonly submitted = signal(false);
+  submitted = signal(false);
 
-  readonly form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    password: ['', [Validators.required, Validators.minLength(4)]],
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
   });
 
   get f() {
@@ -29,13 +29,40 @@ export class LoginComponent {
   }
 
   submit() {
+
     this.submitted.set(true);
-    if (this.form.invalid) return;
 
-    // Placeholder for POST /api/auth/login against the User Service.
-    this.auth.login(this.form.value.name!);
+    if (this.form.invalid) {
+      return;
+    }
 
-    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') || '/profile';
-    this.router.navigateByUrl(redirectTo);
+    const loginData = {
+      email: this.form.value.email!,
+      password: this.form.value.password!
+    };
+
+    this.authService.login(loginData).subscribe({
+
+      next: (response: any) => {
+
+        console.log('Login Success:', response);
+
+        this.authService.saveUser(response);
+
+        this.router.navigate(['/dashboard']);
+
+      },
+
+      error: (err) => {
+
+        console.error('Login Failed:', err);
+
+        alert('Invalid Email or Password');
+
+      }
+
+    });
+
   }
+
 }

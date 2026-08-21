@@ -1,12 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MockDataService } from '../../services/mock-data.service';
-import { FilterGroup, SearchFilterBarComponent } from '../shared/search-filter-bar/search-filter-bar.component';
 
 @Component({
   selector: 'eco-challenges',
   standalone: true,
-  imports: [CommonModule, SearchFilterBarComponent],
+  imports: [CommonModule],
   templateUrl: './challenges.component.html',
   styleUrl: './challenges.component.css',
 })
@@ -15,70 +14,63 @@ export class ChallengesComponent {
 
   readonly challenges = this.data.getChallenges();
   readonly leaderboard = this.data.getLeaderboard();
-
-  // --- Search & filter state ---
+  readonly badges = this.data.getBadges();
   readonly search = signal('');
-  readonly categoryFilter = signal('All');
-  readonly statusFilter = signal('All');
 
-  readonly filterGroups = computed<FilterGroup[]>(() => {
-    const categories = Array.from(new Set(this.challenges().map((c) => c.category))).sort();
-    return [
-      {
-        key: 'category',
-        label: 'Category',
-        options: [
-          { label: 'All categories', value: 'All' },
-          ...categories.map((c) => ({ label: c, value: c })),
-        ],
-      },
-      {
-        key: 'status',
-        label: 'Status',
-        options: [
-          { label: 'All', value: 'All' },
-          { label: 'Joined', value: 'Joined' },
-          { label: 'Not joined', value: 'Not joined' },
-        ],
-      },
-    ];
-  });
-
-  readonly activeFilters = computed(() => ({
-    category: this.categoryFilter(),
-    status: this.statusFilter(),
-  }));
+  // Gamification: XP, level progression, and task completion state.
+  readonly totalXp = this.data.totalXp;
+  readonly currentLevel = this.data.currentLevel;
+  readonly nextLevel = this.data.nextLevel;
+  readonly levelProgressPct = this.data.levelProgressPct;
+  readonly xpLevels = this.data.xpLevels;
 
   readonly filtered = computed(() => {
     const q = this.search().toLowerCase().trim();
-    const category = this.categoryFilter();
-    const status = this.statusFilter();
-    return this.challenges().filter((c) => {
-      const matchesSearch =
-        !q || c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q);
-      const matchesCategory = category === 'All' || c.category === category;
-      const matchesStatus =
-        status === 'All' || (status === 'Joined' ? c.joined : !c.joined);
-      return matchesSearch && matchesCategory && matchesStatus;
-    });
+    if (!q) return this.challenges();
+    return this.challenges().filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.category.toLowerCase().includes(q)
+    );
   });
 
-  onSearchChange(value: string) {
+  onSearch(value: string) {
     this.search.set(value);
-  }
-
-  onFilterChange(change: { key: string; value: string }) {
-    if (change.key === 'category') this.categoryFilter.set(change.value);
-    if (change.key === 'status') this.statusFilter.set(change.value);
-  }
-
-  clearFilters() {
-    this.search.set('');
-    this.categoryFilter.set('All');
-    this.statusFilter.set('All');
   }
 
   toggle(id: string) {
     this.data.toggleChallenge(id);
+  }
+
+  isCompleted(id: string): boolean {
+    return this.data.isChallengeCompleted(id);
+  }
+
+  badgeFor(badgeId: string | undefined) {
+    if (!badgeId) return undefined;
+    return this.badges().find((b) => b.id === badgeId);
+  }
+
+  complete(id: string) {
+    this.data.completeChallenge(id);
+  }
+
+  initials(name: string): string {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  levelIcon(levelName: string): string {
+    switch (levelName) {
+      case 'Green Beginner': return '🌱';
+      case 'Eco Warrior': return '🌍';
+      case 'Climate Hero': return '🔥';
+      case 'Planet Protector': return '🏆';
+      default: return '⭐';
+    }
   }
 }

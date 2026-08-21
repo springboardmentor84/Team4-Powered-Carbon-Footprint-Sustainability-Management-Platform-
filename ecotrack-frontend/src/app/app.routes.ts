@@ -1,13 +1,22 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'dashboard'
+  },
+
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./components/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      import('./components/dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent
+      ),
     title: 'Dashboard — EcoTrack',
   },
+
   {
     path: 'carbon-tracker',
     loadComponent: () =>
@@ -16,12 +25,16 @@ export const routes: Routes = [
       ),
     title: 'Carbon Tracker — EcoTrack',
   },
+
   {
     path: 'goals',
     loadComponent: () =>
-      import('./components/goals/goals.component').then((m) => m.GoalsComponent),
+      import('./components/goals/goals.component').then(
+        (m) => m.GoalsComponent
+      ),
     title: 'Goals — EcoTrack',
   },
+
   {
     path: 'challenges',
     loadComponent: () =>
@@ -30,23 +43,46 @@ export const routes: Routes = [
       ),
     title: 'Challenges — EcoTrack',
   },
+
   {
     path: 'reports',
     loadComponent: () =>
-      import('./components/reports/reports.component').then((m) => m.ReportsComponent),
+      import('./components/reports/reports.component').then(
+        (m) => m.ReportsComponent
+      ),
     title: 'Reports — EcoTrack',
   },
+
   {
     path: 'profile',
     loadComponent: () =>
-      import('./components/profile/profile.component').then((m) => m.ProfileComponent),
+      import('./components/profile/profile.component').then(
+        (m) => m.ProfileComponent
+      ),
     title: 'Profile — EcoTrack',
   },
+
   {
     path: 'login',
     loadComponent: () =>
-      import('./components/login/login.component').then((m) => m.LoginComponent),
+      import('./components/login/login.component').then(
+        (m) => m.LoginComponent
+      ),
     title: 'Log in — EcoTrack',
   },
-  { path: '**', redirectTo: 'dashboard' },
+
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./components/register/register.component').then(
+        (m) => m.RegisterComponent
+      ),
+    title: 'Create Account — EcoTrack',
+  },
+
+  {
+    path: '**',
+    redirectTo: 'dashboard',
+  }
+
 ];

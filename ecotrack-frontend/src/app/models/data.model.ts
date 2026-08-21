@@ -40,13 +40,23 @@ export interface Challenge {
   progress: number;
   joined: boolean;
   reward: string;
+  /** Gamification: XP awarded when this task is completed. */
+  xp: number;
+  /** Gamification: difficulty tier shown on the task card. */
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  /** Gamification: badge id (see Badge) unlocked when this task is completed. */
+  badgeId?: string;
 }
 
 export interface LeaderboardEntry {
   rank: number;
   name: string;
-  ecoScore: number;
-  badge: string;
+  /** Total gamification XP earned from tasks (challenges + goals). */
+  xp: number;
+  /** Current XP level name, e.g. "Eco Warrior". */
+  level: string;
+  /** True for the row representing the logged-in user. */
+  isYou?: boolean;
 }
 
 export interface Report {
