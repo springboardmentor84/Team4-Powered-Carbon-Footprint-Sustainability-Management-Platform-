@@ -190,7 +190,10 @@
 
         @for (goal of goalList; track goal.id) {
 
-          <article class="goal-card">
+          <article
+            class="goal-card"
+            [class.goal-card--selected]="selectedGoalId === goal.id"
+            (click)="selectGoal(goal)">
 
 
             <!-- CARD TOP -->
@@ -253,6 +256,20 @@
             </div>
 
 
+            <!-- XP PROGRESS (shown when this task is selected) -->
+            @if (selectedGoalId === goal.id) {
+              <div class="xp-panel" (click)="$event.stopPropagation()">
+                <div class="xp-panel-head">
+                  <span>Task XP</span>
+                  <strong>{{ goalXpEarned(goal) }} / {{ goalXpTotal(goal) }} XP</strong>
+                </div>
+                <div class="xp-track">
+                  <div class="xp-fill" [style.width.%]="progressPct(goal)"></div>
+                </div>
+              </div>
+            }
+
+
             <!-- FOOTER -->
             <div class="goal-footer">
 
@@ -265,14 +282,14 @@
 
                 <button
                   class="progress-btn"
-                  (click)="bump(goal)">
+                  (click)="$event.stopPropagation(); bump(goal)">
                   Log Progress
                 </button>
 
 
                 <button
                   class="delete-btn"
-                  (click)="deleteGoal(goal.id!)"
+                  (click)="$event.stopPropagation(); deleteGoal(goal.id!)"
                   title="Delete Goal">
                   🗑
                 </button>

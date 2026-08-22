@@ -35,6 +35,21 @@ export class GoalsComponent implements OnInit {
   };
   goalList: any[] = [];
 
+  // Gamification: which goal/task is currently selected to reveal its XP progress.
+  selectedGoalId: number | null = null;
+
+  selectGoal(goal: any) {
+    this.selectedGoalId = this.selectedGoalId === goal.id ? null : goal.id;
+  }
+
+  goalXpTotal(goal: any): number {
+    return this.data.goalXpTotal(goal);
+  }
+
+  goalXpEarned(goal: any): number {
+    return this.data.goalXpEarned(goal);
+  }
+
   get summary() {
     return {
       total: this.goalList.length,
@@ -139,6 +154,8 @@ export class GoalsComponent implements OnInit {
         next: (data) => {
           this.goalList = data;
           console.log("Goals from DB:", data);
+          // Gamification: award task XP + badge the first time a goal is Achieved.
+          this.goalList.forEach((g) => this.data.recordGoalCompletion(g));
         },
         error: (err) => {
           console.error(err);

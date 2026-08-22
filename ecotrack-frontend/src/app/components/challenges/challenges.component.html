@@ -21,7 +21,12 @@
             <span class="days-left">{{ c.daysLeft }} days left</span>
           </div>
           <h3>{{ c.name }}</h3>
-          <p>{{ c.description }}</p>
+          <p class="task-desc">{{ c.description }}</p>
+
+          <div class="task-meta">
+            <span class="diff-tag" [class]="'diff-tag--' + c.difficulty.toLowerCase()">{{ c.difficulty }}</span>
+            <span class="xp-tag">⚡ {{ c.xp }} XP</span>
+          </div>
 
           @if (c.joined) {
             <div class="track"><div class="fill" [style.width.%]="c.progress"></div></div>
@@ -31,16 +36,29 @@
           <div class="challenge-card__footer">
             <div class="meta">
               <span>{{ c.participants | number }} joined</span>
-              <span class="reward">🏅 {{ c.reward }}</span>
+              @if (badgeFor(c.badgeId); as taskBadge) {
+                <span class="badge-chip">🏅 {{ taskBadge.name }}</span>
+              }
             </div>
-            <button
-              class="eco-btn"
-              [class.eco-btn--primary]="!c.joined"
-              [class.eco-btn--ghost]="c.joined"
-              (click)="toggle(c.id)"
-            >
-              {{ c.joined ? 'Leave' : 'Join' }}
-            </button>
+            <div class="card-actions">
+              @if (isCompleted(c.id)) {
+                <span class="completed-pill">✓ Completed</span>
+              } @else {
+                @if (c.joined) {
+                  <button class="eco-btn eco-btn--amber" (click)="complete(c.id)">
+                    Complete Task
+                  </button>
+                }
+                <button
+                  class="eco-btn"
+                  [class.eco-btn--primary]="!c.joined"
+                  [class.eco-btn--ghost]="c.joined"
+                  (click)="toggle(c.id)"
+                >
+                  {{ c.joined ? 'Leave' : 'Join' }}
+                </button>
+              }
+            </div>
           </div>
         </div>
       } @empty {
@@ -48,17 +66,70 @@
       }
     </div>
 
-    <aside class="eco-card leaderboard">
-      <h3>Leaderboard</h3>
-      <ol class="leaderboard__list">
-        @for (row of leaderboard(); track row.rank) {
-          <li class="leaderboard__row">
-            <span class="rank eco-mono">#{{ row.rank }}</span>
-            <span class="name">{{ row.name }}</span>
-            <span class="score eco-mono">{{ row.ecoScore }}</span>
-          </li>
+    <aside class="sidebar">
+      <div class="level-card">
+        <div class="level-card__glow"></div>
+        <div class="level-card__header">
+          <span class="level-card__eyebrow">Your Progress</span>
+          <h3>Level Up</h3>
+        </div>
+
+        <div class="level-card__hero">
+          <span class="level-card__icon">{{ levelIcon(currentLevel().name) }}</span>
+          <div class="level-card__hero-text">
+            <span class="level-card__name">{{ currentLevel().name }}</span>
+            <span class="level-card__xp">{{ totalXp() | number }} <span class="unit">XP</span></span>
+          </div>
+        </div>
+
+        <div class="level-track">
+          <div class="level-fill" [style.width.%]="levelProgressPct()"></div>
+        </div>
+        @if (nextLevel(); as next) {
+          <span class="level-card__next">🚀 {{ next.minXp - totalXp() | number }} XP to <strong>{{ next.name }}</strong></span>
+        } @else {
+          <span class="level-card__next">🎉 You've reached the top level!</span>
         }
-      </ol>
+
+        <div class="level-ladder">
+          @for (lvl of xpLevels; track lvl.name) {
+            <div
+              class="level-pip"
+              [class.level-pip--active]="lvl.name === currentLevel().name"
+              [class.level-pip--done]="totalXp() > lvl.minXp && lvl.name !== currentLevel().name"
+            >
+              <span class="level-pip__icon">{{ levelIcon(lvl.name) }}</span>
+              <span class="level-pip__label">{{ lvl.name }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="leaderboard">
+        <div class="leaderboard__header">
+          <span class="leaderboard__eyebrow">Community Rankings</span>
+          <h3>🏆 Leaderboard</h3>
+        </div>
+        <ol class="leaderboard__list">
+          @for (row of leaderboard(); track row.name) {
+            <li class="leaderboard__row" [class.leaderboard__row--you]="row.isYou" [class]="'rank-tier-' + row.rank">
+              <span class="rank">
+                @if (row.rank <= 3) {
+                  <span class="medal">{{ row.rank === 1 ? '🥇' : row.rank === 2 ? '🥈' : '🥉' }}</span>
+                } @else {
+                  <span class="eco-mono">#{{ row.rank }}</span>
+                }
+              </span>
+              <span class="avatar">{{ initials(row.name) }}</span>
+              <span class="row-info">
+                <span class="name">{{ row.name }}{{ row.isYou ? ' (You)' : '' }}</span>
+                <span class="level-tag">{{ levelIcon(row.level) }} {{ row.level }}</span>
+              </span>
+              <span class="score eco-mono">{{ row.xp | number }}</span>
+            </li>
+          }
+        </ol>
+      </div>
     </aside>
   </div>
 </div>
