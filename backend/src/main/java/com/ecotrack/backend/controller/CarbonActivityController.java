@@ -46,4 +46,13 @@ public class CarbonActivityController {
 
         return ResponseEntity.ok("Activity deleted successfully");
     }
+    // Get personalized recommendation
+    @GetMapping("/recommendation/{email}")
+    public ResponseEntity<String> getRecommendation(
+            @PathVariable String email) {
+
+        return ResponseEntity.ok(
+                carbonActivityService.getRecommendation(email)
+        );
+    }
 }

@@ -53,4 +53,87 @@ public class CarbonActivityService {
             carbonActivityRepository.delete(activity);
         });
     }
+    // Generate personalized recommendation
+    public String getRecommendation(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<CarbonActivity> activities =
+                carbonActivityRepository.findByUser(user);
+
+        if (activities.isEmpty()) {
+            return "Start logging your activities to receive personalized sustainability recommendations.";
+        }
+
+        // Calculate total emission for each category
+        java.util.Map<String, Double> categoryEmissions =
+                new java.util.HashMap<>();
+
+        for (CarbonActivity activity : activities) {
+
+            String category = activity.getCategory();
+            Double emission = activity.getCarbonEmission();
+
+            if (category == null || emission == null) {
+                continue;
+            }
+
+            categoryEmissions.put(
+                    category,
+                    categoryEmissions.getOrDefault(category, 0.0) + emission
+            );
+        }
+
+        if (categoryEmissions.isEmpty()) {
+            return "Keep making sustainable choices to reduce your carbon footprint.";
+        }
+
+        // Find category with highest emission
+        String highestCategory = null;
+        double highestEmission = 0;
+
+        for (java.util.Map.Entry<String, Double> entry :
+                categoryEmissions.entrySet()) {
+
+            if (entry.getValue() > highestEmission) {
+                highestEmission = entry.getValue();
+                highestCategory = entry.getKey();
+            }
+        }
+
+        if (highestCategory == null) {
+            return "Keep making sustainable choices to reduce your carbon footprint.";
+        }
+
+        // Generate recommendation
+        switch (highestCategory.toLowerCase()) {
+
+            case "transportation":
+                return "Your transportation emissions are high. Try using public transport, cycling, or walking for short-distance travel.";
+
+            case "electricity":
+            case "electricity usage":
+                return "Your electricity emissions are high. Switch off unused appliances, use LED bulbs, and choose energy-efficient devices.";
+
+            case "food":
+                return "Your food-related emissions are high. Try eating more plant-based meals and reducing high-carbon food choices.";
+
+            case "waste":
+                return "Your waste emissions are high. Reduce single-use products, reuse items, and recycle whenever possible.";
+
+            case "water":
+                return "Your water-related impact is high. Reduce water wastage by fixing leaks and using water efficiently.";
+
+            case "shopping":
+                return "Your shopping-related impact is high. Choose durable products, avoid unnecessary purchases, and prefer eco-friendly products.";
+
+            case "travel":
+                return "Your travel emissions are high. Consider public transport, carpooling, or lower-carbon travel options.";
+
+            default:
+                return "Your " + highestCategory +
+                        " activities contribute significantly to your footprint. Try choosing more sustainable alternatives.";
+        }
+    }
 }
