@@ -21,10 +21,19 @@ export class CarbonService {
     return this.http.get(`${this.apiUrl}/user/${email}`);
   }
 
- deleteActivity(id: number, email: string): Observable<string> {
-  return this.http.delete(
-    `${this.apiUrl}/${id}?email=${encodeURIComponent(email)}`,
-    { responseType: 'text' }
-  );
-}
+  // Delete activity
+  deleteActivity(id: number, email: string): Observable<string> {
+    return this.http.delete(
+      `${this.apiUrl}/${id}?email=${encodeURIComponent(email)}`,
+      { responseType: 'text' }
+    );
+  }
+
+  // Get personalized recommendation
+  getRecommendation(email: string): Observable<string> {
+    return this.http.get(
+      `${this.apiUrl}/recommendation/${encodeURIComponent(email)}`,
+      { responseType: 'text' }
+    );
+  }
 }

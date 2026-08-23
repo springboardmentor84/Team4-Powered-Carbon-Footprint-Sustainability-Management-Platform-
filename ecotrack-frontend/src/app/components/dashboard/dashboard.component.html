@@ -132,7 +132,138 @@
 </section>
 
 
-  <section class="grid-3">
+<!-- =========================================
+     YOUR GREEN MOVE
+     ========================================= -->
+
+<section class="green-move-card">
+
+  <!-- Header -->
+  <div class="green-move-header">
+
+    <div>
+       <div class="recommendation-heading">
+
+  <span class="recommendation-label">
+    🟢  PERSONALIZED RECOMMENDATION
+  </span>
+
+  <span class="green-move-badge">
+    YOUR GREEN MOVE
+  </span>
+
+  <h2>
+    Make your next choice a little greener.
+  </h2>
+
+</div>
+
+      <p>
+        Based on the carbon activities you've logged this week.
+      </p>
+    </div>
+
+    <div class="green-move-week">
+      THIS WEEK
+    </div>
+
+  </div>
+
+
+  <!-- Main Recommendation -->
+  <div class="green-move-main">
+
+    <!-- Category -->
+    <div class="green-move-category">
+
+      <div class="green-move-category-icon">
+        {{ personalizedRecommendation().icon }}
+      </div>
+
+      <span class="green-move-label">
+        BIGGEST OPPORTUNITY
+      </span>
+
+      <h3>
+        {{ personalizedRecommendation().category }}
+      </h3>
+
+      <p>
+        {{ personalizedRecommendation().title }}
+      </p>
+
+    </div>
+
+
+    <!-- Contribution -->
+    <div class="green-move-impact">
+
+      <span class="impact-label">
+        YOUR IMPACT
+      </span>
+
+      <div class="impact-number">
+        {{ recommendationPercentage() }}<span>%</span>
+      </div>
+
+      <p>
+        of your logged carbon emissions
+      </p>
+
+      <div class="impact-bar">
+
+        <div
+          class="impact-fill"
+          [style.width.%]="recommendationPercentage()">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Recommendation -->
+    <div class="green-move-action">
+
+      <span class="action-label">
+        🌿 TRY THIS
+      </span>
+
+      <h3>
+        {{ personalizedRecommendation().title }}
+      </h3>
+
+      <p>
+        {{ personalizedRecommendation().message }}
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- Bottom -->
+  <div class="green-move-footer">
+
+    <div class="why-icon">
+      🌱
+    </div>
+
+    <div>
+      <span>
+        WHY IT MATTERS
+      </span>
+
+      <p>
+        Small changes in your highest-impact activity can help
+        reduce your overall carbon footprint.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+<section class="grid-3">
 
     <div class="eco-card stat-card">
 

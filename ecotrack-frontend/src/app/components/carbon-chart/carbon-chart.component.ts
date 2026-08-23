@@ -1,72 +1,45 @@
-import {
-  Component,
-  Input,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
-  OnChanges,
-  SimpleChanges
-} from '@angular/core';
-
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import {
-  Chart,
-  LineController,
-  LineElement,
-  PointElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend
-} from 'chart.js';
+interface ChartBar {
+  date: string;
+  label: string;
+  fullDate: string;
+  emission: number;
+  height: number;
+}
 
-Chart.register(
-  LineController,
-  LineElement,
-  PointElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend
-);
+interface CategoryChart {
+  category: string;
+  emission: number;
+  percentage: number;
+  width: number;
+  icon: string;
+}
 
 @Component({
   selector: 'eco-carbon-chart',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './carbon-chart.component.html',
-  styleUrls: ['./carbon-chart.component.css']
+  styleUrl: './carbon-chart.component.css'
 })
-export class CarbonChartComponent
-  implements AfterViewInit, OnChanges {
+export class CarbonChartComponent {
 
-  @ViewChild('chartCanvas')
-  chartCanvas!: ElementRef<HTMLCanvasElement>;
+  @Input() activities: any[] = [];
 
-  @Input()
-  activities: any[] = [];
+  readonly Math = Math;
 
-  chart: Chart | null = null;
 
-  ngAfterViewInit(): void {
-    this.createChart();
-  }
+  // =========================================================
+  // DAILY CARBON EMISSION DATA
+  // =========================================================
 
-  ngOnChanges(changes: SimpleChanges): void {
+  get chartData(): ChartBar[] {
 
-    if (changes['activities'] && this.chart) {
-      this.updateChart();
-    }
+    const grouped = new Map<string, number>();
 
-  }
-
-  // Group carbon emission date-wise
-  getDailyTotals(): { [key: string]: number } {
-
-    const totals: { [key: string]: number } = {};
-
-    for (const activity of this.activities) {
+    for (const activity of this.activities || []) {
 
       const date = activity.activityDate;
 
@@ -74,179 +47,247 @@ export class CarbonChartComponent
         continue;
       }
 
+      const emission = Number(activity.carbonEmission) || 0;
+
+      grouped.set(
+        date,
+        (grouped.get(date) || 0) + emission
+      );
+
+    }
+
+
+    // Sort by date and show latest 7 days
+    const sorted = Array.from(grouped.entries())
+      .sort((a, b) =>
+        new Date(a[0]).getTime() -
+        new Date(b[0]).getTime()
+      )
+      .slice(-7);
+
+
+    // Find highest emission
+    const maxEmission = Math.max(
+      ...sorted.map(item => item[1]),
+      1
+    );
+
+
+    return sorted.map(([date, emission]) => {
+
+      const parsedDate = new Date(`${date}T00:00:00`);
+
+
+      // Short date shown below bar
+      const label = parsedDate.toLocaleDateString(
+        'en-IN',
+        {
+          day: '2-digit',
+          month: 'short'
+        }
+      );
+
+
+      // Bar height
+      const height =
+        emission > 0
+          ? Math.max(
+              (emission / maxEmission) * 100,
+              8
+            )
+          : 4;
+
+
+      return {
+
+        date,
+
+        label,
+
+        fullDate: parsedDate.toLocaleDateString(
+          'en-IN',
+          {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+          }
+        ),
+
+        emission,
+
+        height
+
+      };
+
+    });
+
+  }
+
+
+  // =========================================================
+  // CATEGORY EMISSION DATA
+  // =========================================================
+
+  get categoryData(): CategoryChart[] {
+
+    const grouped = new Map<string, number>();
+
+
+    // Group activities by category
+    for (const activity of this.activities || []) {
+
+      const category =
+        activity.category || 'Other';
+
       const emission =
         Number(activity.carbonEmission) || 0;
 
-      if (totals[date]) {
-        totals[date] += emission;
-      } else {
-        totals[date] = emission;
-      }
+
+      grouped.set(
+        category,
+        (grouped.get(category) || 0) + emission
+      );
 
     }
 
-    return totals;
-  }
 
-  createChart(): void {
+    // Total emission
+    const total = Array.from(grouped.values())
+      .reduce(
+        (sum, value) => sum + value,
+        0
+      );
 
-    if (!this.chartCanvas) {
-      return;
+
+    // No category data
+    if (total === 0) {
+      return [];
     }
 
-    const dailyTotals = this.getDailyTotals();
 
-    const sortedDates = Object.keys(dailyTotals).sort();
+    // Category icons
+    const icons: Record<string, string> = {
 
-    const labels = sortedDates.map(date => {
+      'Transportation': '🚗',
 
-      const d = new Date(date);
+      'Food': '🍽️',
 
-      return d.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short'
-      });
+      'Electricity Usage': '⚡',
 
-    });
+      'Fuel Consumption': '⛽',
 
-    const values = sortedDates.map(
-      date => dailyTotals[date]
-    );
+      'Waste': '♻️',
 
-    this.chart = new Chart(
-      this.chartCanvas.nativeElement,
-      {
-        type: 'line',
+      'Water Usage': '💧',
 
-        data: {
+      'Other': '🌱'
 
-          labels: labels,
+    };
 
-          datasets: [
 
-            {
-              label: 'Daily Carbon Emission (kg CO₂)',
+    // Convert map to chart data
+    return Array.from(grouped.entries())
 
-              data: values,
+      // Highest emission first
+      .sort(
+        (a, b) => b[1] - a[1]
+      )
 
-              borderColor: '#4CAF50',
+      .map(
+        ([category, emission]) => {
 
-              backgroundColor: 'rgba(76, 175, 80, 0.15)',
+          const percentage =
+            (emission / total) * 100;
 
-              borderWidth: 3,
 
-              pointRadius: 5,
+          return {
 
-              pointHoverRadius: 7,
+            category,
 
-              tension: 0.4,
+            emission,
 
-              fill: true
+            percentage,
 
-            }
+            // Used for progress bar width
+            width: percentage,
 
-          ]
+            icon:
+              icons[category] || '🌱'
 
-        },
-
-        options: {
-
-          responsive: true,
-
-          maintainAspectRatio: false,
-
-          plugins: {
-
-            legend: {
-              display: true
-            },
-
-            tooltip: {
-
-              callbacks: {
-
-                label: (context) => {
-
-                  const value =
-                    Number(context.parsed.y) || 0;
-
-                  return ` ${value.toFixed(2)} kg CO₂`;
-
-                }
-
-              }
-
-            }
-
-          },
-
-          scales: {
-
-            y: {
-
-              beginAtZero: true,
-
-              title: {
-
-                display: true,
-
-                text: 'Carbon Emission (kg CO₂)'
-
-              }
-
-            },
-
-            x: {
-
-              title: {
-
-                display: true,
-
-                text: 'Date'
-
-              }
-
-            }
-
-          }
+          };
 
         }
+      );
 
-      }
+  }
+
+
+  // =========================================================
+  // HIGHEST CONTRIBUTING CATEGORY
+  // =========================================================
+
+  get highestCategory(): CategoryChart | null {
+
+    const categories =
+      this.categoryData;
+
+
+    if (categories.length === 0) {
+      return null;
+    }
+
+
+    return categories.reduce(
+      (highest, current) =>
+
+        current.emission >
+        highest.emission
+
+          ? current
+          : highest
     );
 
   }
 
-  updateChart(): void {
 
-    if (!this.chart) {
-      return;
-    }
+  // =========================================================
+  // CHECK WHETHER DATA EXISTS
+  // =========================================================
 
-    const dailyTotals = this.getDailyTotals();
+  get hasData(): boolean {
 
-    const sortedDates = Object.keys(dailyTotals).sort();
+    return this.chartData.length > 0;
 
-    const labels = sortedDates.map(date => {
+  }
 
-      const d = new Date(date);
 
-      return d.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short'
-      });
+  // =========================================================
+  // TOTAL EMISSION
+  // =========================================================
 
-    });
+  get totalEmission(): number {
 
-    const values = sortedDates.map(
-      date => dailyTotals[date]
+    return this.chartData.reduce(
+      (sum, item) =>
+        sum + item.emission,
+      0
     );
 
-    this.chart.data.labels = labels;
+  }
 
-    this.chart.data.datasets[0].data = values;
 
-    this.chart.update();
+  // =========================================================
+  // HIGHEST DAILY EMISSION
+  // =========================================================
+
+  get highestEmission(): number {
+
+    return Math.max(
+      ...this.chartData.map(
+        item => item.emission
+      ),
+      0
+    );
 
   }
 

@@ -1055,3 +1055,521 @@
     grid-template-columns: 1fr;
   }
 }
+/* =========================================
+   YOUR GREEN MOVE
+   ========================================= */
+
+.green-move-card {
+  position: relative;
+  margin: 26px 0;
+
+  padding: 28px;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fcf7 48%,
+      #edf7ec 100%
+    );
+
+  border: 1px solid #dcebdc;
+
+  box-shadow:
+    0 10px 30px rgba(38, 76, 52, 0.09);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.green-move-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 16px 38px rgba(38, 76, 52, 0.13);
+}
+
+
+/* Decorative background */
+
+.green-move-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 190px;
+  height: 190px;
+
+  right: -90px;
+  bottom: -100px;
+
+  border-radius: 50%;
+
+  background: #dcefd8;
+
+  opacity: 0.45;
+
+  pointer-events: none;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.green-move-header {
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.green-move-eyebrow {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
+
+  color: #6c9072;
+}
+
+.green-move-header h2 {
+  margin: 0;
+
+  color: #173d2a;
+
+  font-size: 22px;
+  line-height: 1.3;
+
+  font-weight: 700;
+}
+
+.green-move-header p {
+  margin: 7px 0 0;
+
+  color: #718378;
+
+  font-size: 12px;
+}
+
+.green-move-week {
+  padding: 7px 12px;
+
+  border-radius: 999px;
+
+  background: #e9f4e7;
+
+  border: 1px solid #d4e8d2;
+
+  color: #5e8064;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   MAIN THREE PARTS
+   ========================================= */
+
+.green-move-main {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    1.1fr
+    0.8fr
+    1.6fr;
+
+  margin-top: 26px;
+
+  border: 1px solid #e0ebe0;
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.72);
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   CATEGORY
+   ========================================= */
+
+.green-move-category {
+  padding: 23px;
+
+  border-right: 1px solid #e1ebe0;
+}
+
+.green-move-category-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 16px;
+
+  border-radius: 14px;
+
+  background: #e8f4e5;
+
+  font-size: 25px;
+
+  box-shadow:
+    inset 0 0 0 1px #d8ead5;
+}
+
+.green-move-label,
+.impact-label,
+.action-label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #77907b;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 1.2px;
+}
+
+.green-move-category h3 {
+  margin: 0;
+
+  color: #1b4930;
+
+  font-size: 18px;
+}
+
+.green-move-category p {
+  margin: 5px 0 0;
+
+  color: #78907e;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   IMPACT
+   ========================================= */
+
+.green-move-impact {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 23px;
+
+  border-right: 1px solid #e1ebe0;
+}
+
+.impact-number {
+  color: #17452c;
+
+  font-size: 38px;
+
+  line-height: 1;
+
+  font-weight: 700;
+}
+
+.impact-number span {
+  margin-left: 2px;
+
+  font-size: 18px;
+
+  color: #729278;
+}
+
+.green-move-impact p {
+  margin: 7px 0 14px;
+
+  color: #7a8d7e;
+
+  font-size: 10px;
+
+  line-height: 1.4;
+}
+
+
+/* Impact bar */
+
+.impact-bar {
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  border-radius: 99px;
+
+  background: #e7eee5;
+}
+
+.impact-fill {
+  height: 100%;
+
+  border-radius: 99px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #9bc49d,
+      #527e5d
+    );
+
+  transition: width 0.5s ease;
+}
+
+
+/* =========================================
+   ACTION
+   ========================================= */
+
+.green-move-action {
+  padding: 23px;
+
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+}
+
+.green-move-action .action-label {
+  color: #5e8865;
+}
+
+.green-move-action h3 {
+  margin: 0 0 7px;
+
+  color: #214c31;
+
+  font-size: 17px;
+
+  line-height: 1.3;
+}
+
+.green-move-action p {
+  margin: 0;
+
+  color: #5d7163;
+
+  font-size: 12px;
+
+  line-height: 1.65;
+}
+
+
+/* =========================================
+   FOOTER / WHY IT MATTERS
+   ========================================= */
+
+.green-move-footer {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 18px;
+
+  padding: 14px 16px;
+
+  border-radius: 13px;
+
+  background: #f1f8ef;
+}
+
+.why-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #e2f0df;
+
+  font-size: 16px;
+}
+
+.green-move-footer span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #68836d;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.green-move-footer p {
+  margin: 0;
+
+  color: #627367;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 850px) {
+
+  .green-move-main {
+    grid-template-columns: 1fr;
+  }
+
+  .green-move-category,
+  .green-move-impact {
+    border-right: none;
+
+    border-bottom: 1px solid #e1ebe0;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .green-move-card {
+    padding: 20px;
+  }
+
+  .green-move-header {
+    flex-direction: column;
+  }
+
+  .green-move-week {
+    align-self: flex-start;
+  }
+
+  .green-move-header h2 {
+    font-size: 19px;
+  }
+
+}
+/* =========================================
+   PERSONALIZED RECOMMENDATION
+   ========================================= */
+
+.recommendation-heading {
+  margin-bottom: 26px;
+}
+
+/* Personalized Recommendation label */
+
+.recommendation-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+
+  color: #47735a;
+
+  margin-bottom: 14px;
+}
+
+/* YOUR GREEN MOVE badge */
+
+.green-move-badge {
+  display: block;
+  width: fit-content;
+
+  padding: 7px 15px;
+
+  border-radius: 999px;
+
+  background: #edf6ea;
+  border: 1px solid #d7e8d2;
+
+  color: #47735a;
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+
+  margin-bottom: 12px;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* Badge hover */
+
+.green-move-badge:hover {
+  background: #e2f1df;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 14px rgba(62, 105, 72, 0.12);
+}
+
+
+/* Heading */
+
+.recommendation-heading h2 {
+  margin: 0;
+
+  font-size: 25px;
+  line-height: 1.25;
+
+  color: #143d2b;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+
+/* Whole recommendation heading hover */
+
+.recommendation-heading:hover h2 {
+  color: #245d40;
+  transform: translateX(2px);
+}
