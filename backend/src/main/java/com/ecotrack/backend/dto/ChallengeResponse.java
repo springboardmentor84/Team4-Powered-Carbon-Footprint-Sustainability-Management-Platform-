@@ -1,33 +1,18 @@
 package com.ecotrack.backend.dto;
 
-import lombok.*;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class ChallengeResponse {
-
-    private Long id;
-
-    private String name;
-
-    private String category;
-
-    private String description;
-
-    private Integer daysLeft;
-
-    private Long participants;
-
-    private Integer rewardPoints;
-
-    private String reward;
-
-    private Integer progress;
-
-    private Boolean joined;
-
-    private String status;
+public record ChallengeResponse(
+        Long id,
+        String name,
+        String category,
+        String description,
+        Integer participants,
+        Integer daysLeft,
+        Integer progress,
+        boolean joined,
+        String reward,
+        Integer xp,
+        String difficulty,
+        String badgeId
+)
+{
 }

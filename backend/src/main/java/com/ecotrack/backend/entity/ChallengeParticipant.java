@@ -1,5 +1,6 @@
 package com.ecotrack.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,6 +42,7 @@ public class ChallengeParticipant {
             name = "user_id",
             nullable = false
     )
+        @JsonIgnore
     private User user;
 
     @Column(
@@ -58,6 +60,9 @@ public class ChallengeParticipant {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
+        @Column(name = "xp_awarded", nullable = false)
+        private Boolean xpAwarded;
+
     @PrePersist
     public void prePersist() {
 
@@ -72,5 +77,9 @@ public class ChallengeParticipant {
         if (status == null) {
             status = "active";
         }
+
+                if (xpAwarded == null) {
+                        xpAwarded = false;
+                }
     }
 }

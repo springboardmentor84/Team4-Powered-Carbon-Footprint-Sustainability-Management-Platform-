@@ -46,6 +46,15 @@ public class Challenge {
     @Column(name = "reward_points")
     private Integer rewardPoints;
 
+    @Column(name = "xp", nullable = false)
+    private Integer xp;
+
+    @Column(name = "difficulty", nullable = false, length = 20)
+    private String difficulty;
+
+    @Column(name = "badge_id", length = 20)
+    private String badgeId;
+
     @Column(name = "status", length = 20)
     private String status;
 
@@ -67,6 +76,14 @@ public class Challenge {
 
         if (rewardPoints == null) {
             rewardPoints = 0;
+        }
+
+        if (xp == null) {
+            xp = rewardPoints;
+        }
+
+        if (difficulty == null) {
+            difficulty = "Easy";
         }
 
         if (status == null) {

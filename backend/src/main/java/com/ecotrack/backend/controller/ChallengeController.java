@@ -1,13 +1,14 @@
 package com.ecotrack.backend.controller;
 
-import com.ecotrack.backend.entity.Challenge;
 import com.ecotrack.backend.entity.ChallengeParticipant;
+import com.ecotrack.backend.dto.ChallengeResponse;
 import com.ecotrack.backend.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/challenges")
@@ -26,10 +27,10 @@ public class ChallengeController {
     // =========================================================
 
     @GetMapping
-    public ResponseEntity<List<Challenge>> getChallenges() {
+        public ResponseEntity<List<ChallengeResponse>> getChallenges(Principal principal) {
 
         return ResponseEntity.ok(
-                challengeService.getAllChallenges()
+                challengeService.getAllChallenges(principal.getName())
         );
     }
 
@@ -41,13 +42,13 @@ public class ChallengeController {
     @PostMapping("/{id}/join")
     public ResponseEntity<ChallengeParticipant> joinChallenge(
             @PathVariable Long id,
-            @RequestParam String email
+            Principal principal
     ) {
 
         return ResponseEntity.ok(
                 challengeService.joinChallenge(
                         id,
-                        email
+                        principal.getName()
                 )
         );
     }
@@ -60,12 +61,12 @@ public class ChallengeController {
     @DeleteMapping("/{id}/leave")
     public ResponseEntity<Void> leaveChallenge(
             @PathVariable Long id,
-            @RequestParam String email
+            Principal principal
     ) {
 
         challengeService.leaveChallenge(
                 id,
-                email
+                principal.getName()
         );
 
         return ResponseEntity.noContent().build();
@@ -78,11 +79,11 @@ public class ChallengeController {
 
     @GetMapping("/my")
     public ResponseEntity<List<ChallengeParticipant>> myChallenges(
-            @RequestParam String email
+            Principal principal
     ) {
 
         return ResponseEntity.ok(
-                challengeService.getUserChallenges(email)
+                challengeService.getUserChallenges(principal.getName())
         );
     }
 
@@ -94,14 +95,14 @@ public class ChallengeController {
     @PutMapping("/{id}/progress")
     public ResponseEntity<ChallengeParticipant> updateProgress(
             @PathVariable Long id,
-            @RequestParam String email,
+            Principal principal,
             @RequestParam Integer progress
     ) {
 
         return ResponseEntity.ok(
                 challengeService.updateProgress(
                         id,
-                        email,
+                        principal.getName(),
                         progress
                 )
         );

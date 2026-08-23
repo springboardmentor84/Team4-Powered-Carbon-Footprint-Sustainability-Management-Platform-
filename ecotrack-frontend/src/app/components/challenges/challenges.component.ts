@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MockDataService } from '../../services/mock-data.service';
 
@@ -9,7 +9,7 @@ import { MockDataService } from '../../services/mock-data.service';
   templateUrl: './challenges.component.html',
   styleUrl: './challenges.component.css',
 })
-export class ChallengesComponent {
+export class ChallengesComponent implements OnInit {
   private data = inject(MockDataService);
 
   readonly challenges = this.data.getChallenges();
@@ -23,6 +23,10 @@ export class ChallengesComponent {
   readonly nextLevel = this.data.nextLevel;
   readonly levelProgressPct = this.data.levelProgressPct;
   readonly xpLevels = this.data.xpLevels;
+
+  ngOnInit() {
+    this.data.loadCommunityData();
+  }
 
   readonly filtered = computed(() => {
     const q = this.search().toLowerCase().trim();

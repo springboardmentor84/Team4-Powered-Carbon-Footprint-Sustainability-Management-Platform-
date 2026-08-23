@@ -1,4 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   Badge,
   CarbonEntry,
@@ -23,6 +24,11 @@ export interface XpLevel {
   minXp: number;
 }
 
+interface GamificationApiResponse {
+  totalXp: number;
+  badges: Badge[];
+}
+
 export const XP_LEVELS: XpLevel[] = [
   { level: 1, name: 'Green Beginner', minXp: 0 },
   { level: 2, name: 'Eco Warrior', minXp: 250 },
@@ -40,6 +46,10 @@ export const XP_LEVELS: XpLevel[] = [
  */
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
+  private readonly apiUrl = 'http://localhost:8080/api';
+
+  constructor(private http: HttpClient) {}
+
   readonly currentEcoScore = signal<number>(742);
   private readonly user = signal<UserProfile>({
     id: 'u-1024',
@@ -72,48 +82,13 @@ export class MockDataService {
     { id: 'g5', title: 'Recycle 80% of household waste', type: 'Increase Recycling', target: 80, current: 41, unit: '%', deadline: '2026-10-15', status: 'At Risk' },
   ]);
 
-  private readonly challenges = signal<Challenge[]>([
-    { id: 'ch1', name: 'Plastic-Free Week', category: 'Waste Reduction', description: 'Avoid all single-use plastic for seven consecutive days.', participants: 4213, daysLeft: 4, progress: 60, joined: true, reward: '150 pts + Green Beginner badge', xp: 60, difficulty: 'Easy', badgeId: 'b1' },
-    { id: 'ch2', name: 'Cycle To Work', category: 'Green Transportation', description: 'Log at least 3 cycling commutes this month.', participants: 2876, daysLeft: 11, progress: 33, joined: true, reward: '200 pts', xp: 80, difficulty: 'Easy' },
-    { id: 'ch3', name: 'Energy Saving Challenge', category: 'Renewable Energy', description: 'Reduce electricity draw by 10% versus last month.', participants: 6021, daysLeft: 18, progress: 0, joined: false, reward: '250 pts + Eco Warrior badge', xp: 120, difficulty: 'Medium', badgeId: 'b2' },
-    { id: 'ch4', name: 'Tree Plantation Drive', category: 'Climate Action', description: 'Plant and register at least one tree with photo proof.', participants: 1532, daysLeft: 25, progress: 0, joined: false, reward: '300 pts', xp: 150, difficulty: 'Medium' },
-    { id: 'ch5', name: 'Water Conservation Week', category: 'Water Conservation', description: 'Cut household water use by 20% for a week.', participants: 3190, daysLeft: 7, progress: 80, joined: true, reward: '150 pts', xp: 70, difficulty: 'Easy' },
-    { id: 'ch6', name: 'Zero Waste Challenge', category: 'Waste Reduction', description: 'Send nothing to landfill for two weeks straight.', participants: 987, daysLeft: 13, progress: 0, joined: false, reward: '350 pts + Sustainability Champion badge', xp: 200, difficulty: 'Hard', badgeId: 'b3' },
-  ]);
-
-  // Gamification: XP earned by other community members, used to render
-  // the leaderboard. The logged-in user's row is merged in from totalXp
-  // below so the leaderboard always reflects live task completions.
-  private readonly otherPlayers = signal<{ name: string; xp: number }[]>([
-    { name: 'Rohan Verma', xp: 1050 },
-    { name: 'Lena Fischer', xp: 640 },
-    { name: 'Kwame Boateng', xp: 610 },
-    { name: 'Mei Lin', xp: 260 },
-  ]);
-
-  readonly leaderboard = computed<LeaderboardEntry[]>(() => {
-    const rows: Omit<LeaderboardEntry, 'rank'>[] = [
-      ...this.otherPlayers().map((p) => ({
-        name: p.name,
-        xp: p.xp,
-        level: this.xpLevelFor(p.xp).name,
-      })),
-      {
-        name: this.user().name,
-        xp: this.totalXp(),
-        level: this.currentLevel().name,
-        isYou: true,
-      },
-    ];
-    return rows
-      .sort((a, b) => b.xp - a.xp)
-      .map((row, i) => ({ ...row, rank: i + 1 }));
-  });
+  private readonly challenges = signal<Challenge[]>([]);
+  readonly leaderboard = signal<LeaderboardEntry[]>([]);
 
   // ==========================================================
   // GAMIFICATION: XP, levels, task completion, badge unlocks
   // ==========================================================
-  readonly totalXp = signal<number>(380);
+  readonly totalXp = signal<number>(0);
   private readonly completedChallengeIds = signal<Set<string>>(new Set());
   private readonly awardedGoalIds = signal<Set<string>>(new Set());
 
@@ -154,24 +129,16 @@ export class MockDataService {
   }
 
   isChallengeCompleted(id: string): boolean {
-    return this.completedChallengeIds().has(id);
+    return this.challenges().some(challenge => challenge.id === id && challenge.progress >= 100);
   }
 
   /** Marks a challenge/task complete, awards its XP, and unlocks any tied badge. */
   completeChallenge(id: string) {
-    if (this.completedChallengeIds().has(id)) return;
-    const challenge = this.challenges().find((c) => c.id === id);
-    if (!challenge) return;
-
-    this.completedChallengeIds.update((set) => new Set(set).add(id));
-    this.challenges.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, progress: 100 } : c))
-    );
-    this.totalXp.update((xp) => xp + challenge.xp);
-
-    if (challenge.badgeId) this.unlockBadge(challenge.badgeId);
-    if (this.completedChallengeIds().size >= 5) this.unlockBadge('b3');
-    this.syncLevelBadges();
+    const headers = this.authHeaders();
+    if (!headers) return;
+    this.http.put(`${this.apiUrl}/challenges/${id}/progress`, null, {
+      headers, params: { progress: 100 }
+    }).subscribe(() => this.loadCommunityData());
   }
 
   /** Total XP required to fully complete a goal/task, derived from its target size. */
@@ -216,13 +183,29 @@ export class MockDataService {
   ]);
 
   private readonly badges = signal<Badge[]>([
-    { id: 'b1', name: 'Green Beginner', earned: true, description: 'Logged your first carbon entry.' },
-    { id: 'b2', name: 'Eco Warrior', earned: true, description: 'Reached a 700+ Eco Score.' },
+    { id: 'b1', name: 'Green Beginner', earned: false, description: 'Complete your first community challenge.' },
+    { id: 'b2', name: 'Eco Warrior', earned: false, description: 'Reach 250 XP.' },
     { id: 'b3', name: 'Sustainability Champion', earned: false, description: 'Complete 5 community challenges.' },
-    { id: 'b4', name: 'Climate Hero', earned: false, description: 'Reach a 900+ Eco Score.' },
-    { id: 'b5', name: 'Planet Protector', earned: false, description: 'Sustain a 1000+ Eco Score for 30 days.' },
+    { id: 'b4', name: 'Climate Hero', earned: false, description: 'Reach 600 XP.' },
+    { id: 'b5', name: 'Planet Protector', earned: false, description: 'Reach 1000 XP.' },
     { id: 'b6', name: 'Goal Getter', earned: false, description: 'Achieve your first sustainability goal.' },
   ]);
+
+  loadCommunityData() {
+    const headers = this.authHeaders();
+    if (!headers) return;
+    this.http.get<Challenge[]>(`${this.apiUrl}/challenges`, { headers })
+      .subscribe(challenges => this.challenges.set(challenges.map(challenge => ({
+        ...challenge, id: String(challenge.id)
+      }))));
+    this.http.get<GamificationApiResponse>(`${this.apiUrl}/gamification/me`, { headers })
+      .subscribe(progress => {
+        this.totalXp.set(progress.totalXp);
+        this.badges.set(progress.badges);
+      });
+    this.http.get<LeaderboardEntry[]>(`${this.apiUrl}/gamification/leaderboard`, { headers })
+      .subscribe(rows => this.leaderboard.set(rows));
+  }
 
   getUser() { return this.user.asReadonly(); }
   getCarbonEntries() { return this.carbonEntries.asReadonly(); }
@@ -233,14 +216,23 @@ export class MockDataService {
   getRecommendations() { return this.recommendations.asReadonly(); }
   getBadges() { return this.badges.asReadonly(); }
 
+  private authHeaders(): HttpHeaders | null {
+    const token = localStorage.getItem('token');
+    return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : null;
+  }
+
   addCarbonEntry(entry: CarbonEntry) {
     this.carbonEntries.update((list) => [entry, ...list]);
   }
 
   toggleChallenge(id: string) {
-    this.challenges.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, joined: !c.joined } : c))
-    );
+    const headers = this.authHeaders();
+    const challenge = this.challenges().find(item => item.id === id);
+    if (!headers || !challenge) return;
+    const request = challenge.joined
+      ? this.http.delete(`${this.apiUrl}/challenges/${id}/leave`, { headers })
+      : this.http.post(`${this.apiUrl}/challenges/${id}/join`, {}, { headers });
+    request.subscribe(() => this.loadCommunityData());
   }
 
   updateGoalProgress(id: string, current: number) {

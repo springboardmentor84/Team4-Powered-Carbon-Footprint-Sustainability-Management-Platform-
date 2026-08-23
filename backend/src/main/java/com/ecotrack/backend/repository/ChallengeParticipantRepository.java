@@ -25,7 +25,7 @@ public interface ChallengeParticipantRepository
             User user
     );
 
-    long countByChallenge(
-            Challenge challenge
-    );
+        long countByChallengeAndStatus(Challenge challenge, String status);
+
+        long countByUserAndStatus(User user, String status);
 }

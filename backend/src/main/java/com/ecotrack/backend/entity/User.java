@@ -34,6 +34,9 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private Boolean active;
 
+    @Column(name = "total_xp", nullable = false)
+    private Integer totalXp;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -51,6 +54,10 @@ public class User {
 
         if (role == null) {
             role = Role.USER;
+        }
+
+        if (totalXp == null) {
+            totalXp = 0;
         }
     }
 

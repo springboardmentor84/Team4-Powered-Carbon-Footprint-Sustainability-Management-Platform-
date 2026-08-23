@@ -51,9 +51,10 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/goals/**",
                                 "/carbon/**",
-                                "/carbon-engine/**",
-                                "/api/challenges/**"
+                                "/carbon-engine/**"
                         ).permitAll()
+
+                        .requestMatchers("/api/challenges/**").authenticated()
 
                         .anyRequest().authenticated()
                 )
