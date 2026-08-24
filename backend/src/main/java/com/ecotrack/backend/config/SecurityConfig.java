@@ -53,6 +53,7 @@ public class SecurityConfig {
                                 "/carbon/**",
                                 "/carbon-engine/**"
                         ).permitAll()
+                        .requestMatchers("/notifications/**").authenticated()
 
                         .requestMatchers("/api/challenges/**").authenticated()
 
