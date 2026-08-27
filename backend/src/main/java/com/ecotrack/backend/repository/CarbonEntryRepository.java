@@ -1,4 +1,12 @@
 package com.ecotrack.backend.repository;
 
-public interface CarbonEntryRepository {
+import com.ecotrack.backend.entity.CarbonActivity;
+import com.ecotrack.backend.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface CarbonEntryRepository extends JpaRepository<CarbonActivity, Long> {
+    List<CarbonActivity> findByUser(User user);
+    List<CarbonActivity> findByUser_Id(Long userId);
 }
