@@ -14,15 +14,18 @@ import { CarbonService } from '../../services/carbon.service';
 import { GoalService } from '../../services/goal.service';
 import { CarbonChartComponent } from '../carbon-chart/carbon-chart.component';
 import { MockDataService } from '../../services/mock-data.service';
+import { RecommendationService } from '../../services/recommendation.service';
+import { EcoBotComponent } from '../eco-bot/eco-bot.component';
 
 @Component({
   selector: 'eco-dashboard',
   standalone: true,
   imports: [
-    DecimalPipe,
-    RouterLink,
-    CarbonChartComponent
-  ],
+  DecimalPipe,
+  RouterLink,
+  CarbonChartComponent,
+  EcoBotComponent
+],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -31,6 +34,7 @@ export class DashboardComponent implements OnInit {
   private carbonService = inject(CarbonService);
   private goalService = inject(GoalService);
   private data = inject(MockDataService);
+  private recommendationService = inject(RecommendationService);
 
   readonly Math = Math;
 
@@ -292,34 +296,36 @@ readonly recommendationPercentage = computed(() => {
     this.username = email.split("@")[0];
 
     // ==============================
-    // GET PERSONALIZED RECOMMENDATION
-    // ==============================
+// GET AI PERSONALIZED RECOMMENDATION
+// ==============================
 
-    this.carbonService.getRecommendation(email).subscribe({
+this.recommendationService.generateRecommendation(email).subscribe({
 
-      next: (data: string) => {
+  next: (data: any) => {
 
-        this.recommendation = data;
+    this.recommendation =
+      data.recommendationText || 
+      'Keep making sustainable choices to reduce your carbon footprint.';
 
-        console.log(
-          'Recommendation:',
-          this.recommendation
-        );
+    console.log(
+      'AI Recommendation:',
+      data
+    );
 
-      },
+  },
 
-      error: (err) => {
+  error: (err) => {
 
-        console.error(
-          'Recommendation error:',
-          err
-        );
+    console.error(
+      'AI Recommendation error:',
+      err
+    );
 
-        this.recommendation =
-          'Keep making sustainable choices to reduce your carbon footprint.';
-      }
+    this.recommendation =
+      'Keep making sustainable choices to reduce your carbon footprint.';
+  }
 
-    });
+});
 
     // ==============================
     // GET USER ACTIVITIES
