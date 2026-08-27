@@ -56,7 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/notifications/**").authenticated()
 
                         .requestMatchers("/api/challenges/**").authenticated()
-
+                        .requestMatchers("/api/recommendations/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
                         .anyRequest().authenticated()
                 )
 

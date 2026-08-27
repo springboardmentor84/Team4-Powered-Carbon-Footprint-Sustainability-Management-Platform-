@@ -105,7 +105,6 @@ public class CarbonActivityService {
         if (highestCategory == null) {
             return "Keep making sustainable choices to reduce your carbon footprint.";
         }
-
         // Generate recommendation
         switch (highestCategory.toLowerCase()) {
 
