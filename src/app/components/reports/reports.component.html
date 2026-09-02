@@ -1,0 +1,75 @@
+<div class="eco-page">
+  <div class="eco-page-header">
+    <div>
+      <span class="eco-eyebrow">Reports &amp; Export</span>
+      <h1>Generate and download reports</h1>
+    </div>
+  </div>
+
+  <div class="reports-layout">
+
+    <!-- =========================================
+         LEFT — QUICK ACTIONS + HISTORY
+    ========================================== -->
+
+    <div class="reports-main">
+
+      <section class="quick-grid">
+        @for (type of reportTypes; track type) {
+          <div class="eco-card quick-card">
+            <h3>{{ type }}</h3>
+            <p>Export a fresh {{ type | lowercase }} report as PDF or Excel.</p>
+            <button
+              class="eco-btn eco-btn--primary"
+              [disabled]="generating() === type"
+              (click)="requestReport(type)"
+            >
+              {{ generating() === type ? 'Generating…' : 'Generate report' }}
+            </button>
+          </div>
+        }
+      </section>
+
+      <section class="eco-card">
+        <h3>Report history</h3>
+        <table class="table">
+          <thead>
+            <tr><th>Title</th><th>Type</th><th>Period</th><th>Generated</th><th>Format</th><th></th></tr>
+          </thead>
+          <tbody>
+            @for (r of reports(); track r.id) {
+              <tr>
+                <td>{{ r.title }}</td>
+                <td><span class="eco-tag">{{ r.type }}</span></td>
+                <td>{{ r.period }}</td>
+                <td>{{ r.generatedOn }}</td>
+                <td>{{ r.format }}</td>
+                <td class="right">
+                  <button class="eco-btn eco-btn--ghost" (click)="download(r)">Download</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+
+
+    <!-- =========================================
+         RIGHT — SUSTAINABILITY SCORE TREND
+    ========================================== -->
+
+    <aside class="reports-side">
+
+      <section class="eco-card trend-card">
+        <eco-sustainability-trend-chart
+          [points]="scoreTrend()">
+        </eco-sustainability-trend-chart>
+      </section>
+
+    </aside>
+
+  </div>
+
+</div>

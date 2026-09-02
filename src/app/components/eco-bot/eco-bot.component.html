@@ -1,0 +1,112 @@
+<!-- Floating EcoBot Button -->
+@if (!isOpen) {
+  <button
+    class="eco-bot-button"
+    type="button"
+    (click)="toggleBot()"
+    aria-label="Open EcoBot"
+  >
+    🤖
+  </button>
+}
+
+<!-- Chatbot Window -->
+@if (isOpen) {
+
+  <div class="eco-bot-window">
+
+    <!-- Header -->
+    <div class="bot-header">
+
+      <div class="bot-info">
+
+        <div class="bot-icon">
+          🤖
+        </div>
+
+        <div>
+          <h3>EcoBot</h3>
+          <span>AI Sustainability Assistant</span>
+        </div>
+
+      </div>
+
+      <button
+        class="close-button"
+        type="button"
+        (click)="toggleBot()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <!-- Messages -->
+    <div class="chat-messages">
+
+      @for (msg of messages; track $index) {
+
+        <div
+          class="message-row"
+          [class.user-row]="msg.sender === 'user'"
+          [class.bot-row]="msg.sender === 'bot'"
+        >
+
+          @if (msg.sender === 'bot') {
+            <div class="small-bot-icon">
+              🤖
+            </div>
+          }
+
+          <div class="message">
+            {{ msg.text }}
+          </div>
+
+        </div>
+
+      }
+
+      @if (isLoading) {
+
+        <div class="message-row bot-row">
+
+          <div class="small-bot-icon">
+            🤖
+          </div>
+
+          <div class="message typing">
+            EcoBot is thinking...
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- Input -->
+    <div class="chat-input">
+
+      <input
+        type="text"
+        [(ngModel)]="message"
+        (keyup.enter)="sendMessage()"
+        placeholder="Ask EcoBot anything..."
+        [disabled]="isLoading"
+      />
+
+      <button
+        type="button"
+        (click)="sendMessage()"
+        [disabled]="!message.trim() || isLoading"
+      >
+        ➤
+      </button>
+
+    </div>
+
+  </div>
+
+}

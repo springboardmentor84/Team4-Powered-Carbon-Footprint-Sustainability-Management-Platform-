@@ -1,0 +1,157 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.trend-chart {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.trend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.trend-eyebrow {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #6f9477;
+}
+
+.trend-heading h3 {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: #123f30;
+}
+
+.trend-panel-icon {
+  font-size: 18px;
+  opacity: 0.85;
+}
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.trend-empty {
+  text-align: center;
+  padding: 30px 12px;
+  color: #7d887f;
+}
+
+.trend-empty .empty-icon {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.trend-empty p {
+  margin: 0;
+  font-size: 12.5px;
+}
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.trend-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.trend-score {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--pine-800, #123f30);
+  line-height: 1;
+}
+
+.trend-delta {
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.trend-delta.trend-up {
+  color: #2e6b4f;
+  background: #e5f2e8;
+}
+
+.trend-delta.trend-down {
+  color: var(--danger, #b5493f);
+  background: #fbeae8;
+}
+
+.trend-delta.trend-flat {
+  color: var(--ink-400, #798179);
+  background: var(--sand-100, #efe9da);
+}
+
+.trend-caption {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  color: #7d887f;
+}
+
+/* =========================================
+   GRAPH
+========================================= */
+
+.trend-graph {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.trend-svg {
+  width: 100%;
+  height: 130px;
+  display: block;
+  overflow: visible;
+}
+
+.grid-line {
+  stroke: #efe9da;
+  stroke-width: 0.4;
+}
+
+.trend-dot {
+  fill: #1b4332;
+  stroke: #fff;
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+/* =========================================
+   AXIS
+========================================= */
+
+.trend-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  gap: 4px;
+}
+
+.trend-axis span {
+  font-size: 10px;
+  color: var(--ink-400, #798179);
+  white-space: nowrap;
+}

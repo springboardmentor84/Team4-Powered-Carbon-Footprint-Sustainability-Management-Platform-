@@ -1,0 +1,384 @@
+<div class="carbon-chart">
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <div class="chart-header">
+
+    <div class="chart-heading">
+
+      <span class="chart-eyebrow">
+        YOUR FOOTPRINT
+      </span>
+
+      <h2>
+        Your Carbon Footprint
+      </h2>
+
+      <p>
+        See how your daily emissions are changing.
+      </p>
+
+    </div>
+
+    <div class="chart-summary">
+
+      <span class="summary-label">
+        TRACKED
+      </span>
+
+      <strong>
+        {{ totalEmission | number:'1.1-1' }}
+        <small>kg CO₂e</small>
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  @if (!hasData) {
+
+    <!-- =========================================
+         EMPTY STATE
+    ========================================== -->
+
+    <div class="chart-empty">
+
+      <div class="empty-icon">
+        🌱
+      </div>
+
+      <h3>
+        Your footprint starts here
+      </h3>
+
+      <p>
+        Log your first carbon activity to see your progress.
+      </p>
+
+    </div>
+
+  } @else {
+
+    <!-- =========================================
+         TWO CHARTS
+    ========================================== -->
+
+    <div class="charts-grid">
+
+
+      <!-- =======================================
+           CHART 1 — DAILY CARBON FOOTPRINT
+      ======================================== -->
+
+      <div class="chart-panel">
+
+        <div class="panel-heading">
+
+          <div>
+
+            <span class="panel-eyebrow">
+              DAILY TREND
+            </span>
+
+            <h3>
+              Emission Trend
+            </h3>
+
+          </div>
+
+          <span class="panel-icon">
+            📈
+          </span>
+
+        </div>
+
+
+        <!-- Graph -->
+
+        <div class="chart-area">
+
+          <!-- Y Axis -->
+
+          <div class="y-axis">
+
+            <span>
+              {{ highestEmission | number:'1.1-1' }}
+            </span>
+
+            <span>
+              {{ (highestEmission * 0.75) | number:'1.1-1' }}
+            </span>
+
+            <span>
+              {{ (highestEmission * 0.50) | number:'1.1-1' }}
+            </span>
+
+            <span>
+              {{ (highestEmission * 0.25) | number:'1.1-1' }}
+            </span>
+
+            <span>
+              0
+            </span>
+
+          </div>
+
+
+          <!-- Graph -->
+
+          <div class="bars-wrapper">
+
+            <!-- Grid -->
+
+            <div class="grid-lines">
+
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+
+            <!-- Bars -->
+
+            <div class="bars">
+
+              @for (
+                bar of chartData;
+                track bar.date
+              ) {
+
+                <div class="bar-column">
+
+                  <!-- Tooltip -->
+
+                  <div class="bar-tooltip">
+
+                    <span>
+                      {{ bar.fullDate }}
+                    </span>
+
+                    <strong>
+                      {{ bar.emission | number:'1.1-1' }}
+                      <small>kg CO₂e</small>
+                    </strong>
+
+                  </div>
+
+
+                  <!-- Bar -->
+
+                  <div
+                    class="bar"
+                    [style.height.%]="bar.height">
+
+                    <div class="bar-glow"></div>
+
+                    <div class="bar-top"></div>
+
+                  </div>
+
+
+                  <!-- Date -->
+
+                  <span class="bar-label">
+                    {{ bar.label }}
+                  </span>
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Chart Footer -->
+
+        <div class="chart-footer">
+
+          <div class="footer-item">
+
+            <span class="footer-dot"></span>
+
+            <span>
+              Daily carbon emission
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =======================================
+           CHART 2 — CATEGORY BREAKDOWN
+      ======================================== -->
+
+      <div class="chart-panel category-panel">
+
+        <div class="panel-heading">
+
+          <div>
+
+            <span class="panel-eyebrow">
+              WHERE IT COMES FROM
+            </span>
+
+            <h3>
+              Emission by Category
+            </h3>
+
+          </div>
+
+          <span class="panel-icon">
+            🌿
+          </span>
+
+        </div>
+
+
+        <p class="category-description">
+          See which activities contribute most to your footprint.
+        </p>
+
+
+        <!-- Category Bars -->
+
+        <div class="category-list">
+
+          @for (
+            item of categoryData;
+            track item.category
+          ) {
+
+            <div class="category-item">
+
+
+              <!-- Category Header -->
+
+              <div class="category-top">
+
+                <div class="category-name">
+
+                  <span class="category-icon">
+                    {{ item.icon }}
+                  </span>
+
+                  <span>
+                    {{ item.category }}
+                  </span>
+
+                </div>
+
+
+                <div class="category-value">
+
+                  <strong>
+                    {{ item.emission | number:'1.1-1' }}
+                  </strong>
+
+                  <small>
+                    kg CO₂e
+                  </small>
+
+                </div>
+
+              </div>
+
+
+              <!-- Progress -->
+
+              <div class="category-track">
+
+                <div
+                  class="category-fill"
+                  [style.width.%]="item.width">
+
+                </div>
+
+              </div>
+
+
+              <!-- Percentage -->
+
+              <div class="category-bottom">
+
+                <span>
+                  {{ item.percentage | number:'1.0-0' }}%
+                  of total
+                </span>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- Highest Contributor -->
+
+        @if (highestCategory) {
+
+          <div class="highest-category">
+
+            <div class="highest-icon">
+              {{ highestCategory.icon }}
+            </div>
+
+            <div class="highest-text">
+
+              <span>
+                BIGGEST CONTRIBUTOR
+              </span>
+
+              <strong>
+                {{ highestCategory.category }}
+              </strong>
+
+            </div>
+
+            <div class="highest-percent">
+              {{ highestCategory.percentage | number:'1.0-0' }}%
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         OVERALL FOOTER
+    ========================================== -->
+
+    <div class="overall-chart-footer">
+
+      <span>
+        🌱 Lower emissions = better
+      </span>
+
+      <span>
+        Based on your logged activities
+      </span>
+
+    </div>
+
+  }
+
+</div>

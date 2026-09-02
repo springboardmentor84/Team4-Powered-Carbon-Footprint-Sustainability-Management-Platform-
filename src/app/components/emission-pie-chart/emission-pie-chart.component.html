@@ -1,0 +1,117 @@
+<div class="pie-chart">
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <div class="pie-header">
+
+    <div class="pie-heading">
+      <span class="pie-eyebrow">SOURCE BREAKDOWN</span>
+      <h3>Emission by Source</h3>
+      <p>Percentage contribution of each emission source.</p>
+    </div>
+
+    <span class="pie-panel-icon">🥧</span>
+
+  </div>
+
+
+  @if (!hasData) {
+
+    <div class="pie-empty">
+      <div class="empty-icon">🌱</div>
+      <h4>Nothing to break down yet</h4>
+      <p>Log a few activities to see your source split.</p>
+    </div>
+
+  } @else {
+
+    <div class="pie-body">
+
+      <!-- Donut -->
+
+      <div class="donut-wrap">
+
+        <svg viewBox="0 0 36 36" class="donut">
+
+          <circle
+            cx="18" cy="18" r="15.9155"
+            fill="none"
+            stroke="#efe9da"
+            stroke-width="4"/>
+
+          @for (slice of slices; track slice.category) {
+
+            <circle
+              class="donut-slice"
+              cx="18" cy="18" r="15.9155"
+              fill="none"
+              [attr.stroke]="slice.color"
+              stroke-width="4"
+              stroke-linecap="round"
+              [attr.stroke-dasharray]="slice.dashArray"
+              [attr.stroke-dashoffset]="slice.dashOffset"
+              transform="rotate(-90 18 18)">
+
+              <title>{{ slice.category }}: {{ slice.percentage | number:'1.0-0' }}%</title>
+
+            </circle>
+
+          }
+
+        </svg>
+
+        <div class="donut-center">
+          <span class="donut-total eco-mono">
+            {{ totalEmission | number:'1.0-1' }}
+          </span>
+          <span class="donut-unit">kg CO₂e</span>
+        </div>
+
+      </div>
+
+
+      <!-- Legend -->
+
+      <div class="pie-legend">
+
+        @for (slice of slices; track slice.category) {
+
+          <div class="legend-row">
+
+            <span class="legend-dot" [style.background]="slice.color"></span>
+
+            <span class="legend-name">
+              <span class="legend-icon">{{ slice.icon }}</span>
+              {{ slice.category }}
+            </span>
+
+            <span class="legend-percent eco-mono">
+              {{ slice.percentage | number:'1.0-0' }}%
+            </span>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    @if (topSlice) {
+
+      <div class="pie-footer">
+        <span class="footer-icon">{{ topSlice.icon }}</span>
+        <span>
+          <strong>{{ topSlice.category }}</strong>
+          is your largest source at {{ topSlice.percentage | number:'1.0-0' }}% of total emissions.
+        </span>
+      </div>
+
+    }
+
+  }
+
+</div>

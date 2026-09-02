@@ -1,0 +1,69 @@
+<div class="eco-page">
+  <div class="eco-page-header">
+    <div>
+      <span class="eco-eyebrow">Profile</span>
+      <h1>Your account</h1>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="eco-card summary">
+      @if (isLoggedIn()) {
+        <span class="eco-tag eco-tag--status eco-tag--online">Logged in</span>
+      } @else {
+        <div class="login-prompt">
+          <p>Log in to personalize your profile.</p>
+          <a routerLink="/login" class="eco-btn eco-btn--amber">Log in</a>
+        </div>
+      }
+      <div class="avatar">{{ avatarInitials() }}</div>
+      <h3>{{ displayName() }}</h3>
+      <span class="eco-tag">{{ user().role }}</span>
+      @if (isLoggedIn()) {
+        <button class="eco-btn eco-btn--ghost" (click)="logout()">Log out</button>
+      }
+      <div class="summary__stats">
+        <div><strong class="eco-mono">{{ user().ecoScore }}</strong><span>Eco Score</span></div>
+        <div><strong>{{ user().level }}</strong><span>Level</span></div>
+        <div><strong>{{ user().joinedOn }}</strong><span>Member since</span></div>
+      </div>
+      <div class="interests">
+        @for (i of user().interests; track i) {
+          <span class="eco-tag">{{ i }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="right-col">
+      <form class="eco-card" [formGroup]="form" (ngSubmit)="save()">
+        <h3>Account details</h3>
+        <label class="field">
+          <span>Full name</span>
+          <input type="text" formControlName="name" />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" formControlName="email" />
+        </label>
+        <label class="field">
+          <span>Location</span>
+          <input type="text" formControlName="location" />
+        </label>
+        <button type="submit" class="eco-btn eco-btn--primary">Save changes</button>
+      </form>
+
+      <div class="eco-card">
+        <h3>Badges</h3>
+        <div class="badge-grid">
+          @for (b of badges(); track b.id) {
+            <div class="badge" [class.badge--locked]="!b.earned">
+              <span class="badge__icon">{{ b.earned ? '🏅' : '🔒' }}</span>
+              <span class="badge__name">{{ b.name }}</span>
+              <span class="badge__desc">{{ b.description }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

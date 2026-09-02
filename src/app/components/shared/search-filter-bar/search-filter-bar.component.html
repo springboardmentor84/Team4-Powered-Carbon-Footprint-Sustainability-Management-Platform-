@@ -1,0 +1,38 @@
+<div class="sfb">
+  <div class="sfb__row">
+    <label class="sfb__search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        [placeholder]="placeholder"
+        [value]="searchValue"
+        (input)="onSearchInput($any($event.target).value)"
+      />
+    </label>
+
+    @for (group of filterGroups; track group.key) {
+      <label class="sfb__select">
+        <span>{{ group.label }}</span>
+        <select
+          [value]="activeFilters[group.key] || 'All'"
+          (change)="onFilterChange(group.key, $any($event.target).value)"
+        >
+          @for (opt of group.options; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </label>
+    }
+
+    @if (hasActiveFilters) {
+      <button type="button" class="sfb__clear" (click)="clear()">Clear filters</button>
+    }
+  </div>
+
+  @if (countLabel) {
+    <span class="sfb__count eco-mono">{{ countLabel }}</span>
+  }
+</div>

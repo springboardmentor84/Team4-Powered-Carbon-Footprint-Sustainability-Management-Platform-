@@ -1,0 +1,918 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.carbon-chart {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 0 0;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 25px;
+  margin-bottom: 28px;
+}
+
+.chart-heading {
+  min-width: 0;
+}
+
+.chart-eyebrow {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #6f9477;
+}
+
+.chart-heading h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #123f30;
+}
+
+.chart-heading p {
+  margin: 7px 0 0;
+  font-size: 12px;
+  color: #7d887f;
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.chart-summary {
+  min-width: 125px;
+  padding: 11px 15px;
+  border: 1px solid #dce9dc;
+  border-radius: 14px;
+  background: #f6faf4;
+  transition: all 0.25s ease;
+}
+
+.chart-summary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(39, 82, 57, 0.1);
+}
+
+.summary-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #78907e;
+}
+
+.chart-summary strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  color: #174b38;
+}
+
+.chart-summary small {
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 400;
+  color: #7d887f;
+}
+
+
+/* =========================================
+   TWO CHART LAYOUT
+========================================= */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+
+/* =========================================
+   CHART PANEL
+========================================= */
+
+.chart-panel {
+  position: relative;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 18px 18px 16px;
+  border: 1px solid #dce9dc;
+  border-radius: 17px;
+  background: #fbfdf9;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.chart-panel:hover {
+  transform: translateY(-2px);
+  border-color: #c9ddca;
+  box-shadow: 0 12px 30px rgba(45, 83, 58, 0.07);
+}
+
+
+/* =========================================
+   PANEL HEADER
+========================================= */
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.panel-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: #72927a;
+}
+
+.panel-heading h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #164634;
+}
+
+.panel-icon {
+  width: 31px;
+  height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #edf6eb;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.chart-panel:hover .panel-icon {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+
+/* =========================================
+   DAILY CHART AREA
+========================================= */
+
+.chart-area {
+  display: flex;
+  width: 100%;
+  height: 270px;
+  margin-top: 8px;
+}
+
+
+/* =========================================
+   Y AXIS
+========================================= */
+
+.y-axis {
+  width: 36px;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 4px 7px 32px 0;
+
+  box-sizing: border-box;
+
+  text-align: right;
+
+  font-size: 9px;
+  color: #9aa69e;
+}
+
+
+/* =========================================
+   GRAPH WRAPPER
+========================================= */
+
+.bars-wrapper {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+}
+
+
+/* =========================================
+   GRID LINES
+========================================= */
+
+.grid-lines {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  bottom: 32px;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  pointer-events: none;
+}
+
+.grid-lines span {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #e7eee7;
+}
+
+
+/* =========================================
+   BARS CONTAINER
+========================================= */
+
+.bars {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: space-evenly;
+
+  gap: 8px;
+}
+
+
+/* =========================================
+   INDIVIDUAL BAR COLUMN
+========================================= */
+
+.bar-column {
+  position: relative;
+
+  flex: 1;
+  min-width: 35px;
+  max-width: 75px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+
+/* =========================================
+   BAR
+========================================= */
+
+.bar {
+  position: relative;
+
+  width: 34px;
+  min-height: 7px;
+
+  border-radius: 10px 10px 4px 4px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #9bc9a2 0%,
+      #73a77d 48%,
+      #4f8661 100%
+    );
+
+  box-shadow:
+    0 7px 14px rgba(71, 123, 82, 0.14);
+
+  cursor: pointer;
+
+  transform-origin: bottom;
+
+  animation: growBar 0.7s cubic-bezier(.2, .8, .2, 1) both;
+
+  transition:
+    transform 0.25s ease,
+    width 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.bar:hover {
+  width: 40px;
+
+  transform: translateY(-5px);
+
+  filter: brightness(1.06);
+
+  box-shadow:
+    0 13px 25px rgba(54, 104, 67, 0.23);
+}
+
+
+/* =========================================
+   BAR TOP SHINE
+========================================= */
+
+.bar-top {
+  position: absolute;
+  top: 0;
+  left: 6px;
+  right: 6px;
+
+  height: 3px;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.5);
+}
+
+
+/* =========================================
+   BAR GLOW
+========================================= */
+
+.bar-glow {
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+
+  opacity: 0;
+
+  transition: opacity 0.25s ease;
+}
+
+.bar:hover .bar-glow {
+  opacity: 1;
+}
+
+
+/* =========================================
+   DATE LABEL
+========================================= */
+
+.bar-label {
+  position: absolute;
+
+  bottom: 0;
+
+  transform: translateY(20px);
+
+  white-space: nowrap;
+
+  font-size: 9px;
+  font-weight: 500;
+
+  color: #89958d;
+}
+
+
+/* =========================================
+   TOOLTIP
+========================================= */
+
+.bar-tooltip {
+  position: absolute;
+
+  left: 50%;
+  bottom: calc(100% + 12px);
+
+  transform:
+    translate(-50%, 7px)
+    scale(0.94);
+
+  width: max-content;
+  min-width: 115px;
+
+  padding: 9px 11px;
+
+  border-radius: 10px;
+
+  background: #123f30;
+  color: white;
+
+  box-shadow:
+    0 12px 25px rgba(18, 63, 48, 0.22);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  z-index: 20;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.bar-tooltip::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: -5px;
+
+  width: 9px;
+  height: 9px;
+
+  transform: translateX(-50%) rotate(45deg);
+
+  background: #123f30;
+}
+
+.bar-tooltip span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 8px;
+
+  color: #bdd1c4;
+}
+
+.bar-tooltip strong {
+  display: block;
+
+  font-size: 13px;
+
+  color: #ffffff;
+}
+
+.bar-tooltip small {
+  font-size: 8px;
+  font-weight: 400;
+
+  color: #c5d8cc;
+}
+
+.bar-column:hover .bar-tooltip {
+  opacity: 1;
+
+  transform:
+    translate(-50%, 0)
+    scale(1);
+}
+
+
+/* =========================================
+   CHART FOOTER
+========================================= */
+
+.chart-footer {
+  display: flex;
+  align-items: center;
+
+  margin-top: 28px;
+  padding-top: 12px;
+
+  border-top: 1px solid #edf1ed;
+}
+
+.footer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 10px;
+
+  color: #718078;
+}
+
+.footer-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #679b74;
+
+  box-shadow:
+    0 0 0 4px #edf6ee;
+}
+
+
+/* =========================================
+   CATEGORY PANEL
+========================================= */
+
+.category-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-description {
+  margin: -2px 0 18px;
+
+  font-size: 10px;
+  line-height: 1.5;
+
+  color: #87948c;
+}
+
+
+/* =========================================
+   CATEGORY LIST
+========================================= */
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.category-item {
+  transition: transform 0.2s ease;
+}
+
+.category-item:hover {
+  transform: translateX(3px);
+}
+
+
+/* =========================================
+   CATEGORY TOP
+========================================= */
+
+.category-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+}
+
+.category-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 0;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  color: #285340;
+}
+
+.category-icon {
+  width: 23px;
+  height: 23px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 8px;
+
+  background: #edf6eb;
+
+  font-size: 12px;
+}
+
+.category-value {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.category-value strong {
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 11px;
+
+  color: #174b38;
+}
+
+.category-value small {
+  font-size: 7px;
+  color: #8b978f;
+}
+
+
+/* =========================================
+   CATEGORY PROGRESS
+========================================= */
+
+.category-track {
+  width: 100%;
+  height: 5px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #e9f0e8;
+}
+
+.category-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #9bc9a2,
+      #4f8060
+    );
+
+  transition:
+    width 0.8s cubic-bezier(.2, .8, .2, 1);
+}
+
+
+/* =========================================
+   CATEGORY BOTTOM
+========================================= */
+
+.category-bottom {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 4px;
+
+  font-size: 7px;
+
+  color: #9aa59e;
+}
+
+
+/* =========================================
+   HIGHEST CATEGORY
+========================================= */
+
+.highest-category {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: auto;
+  padding: 10px;
+
+  border: 1px solid #dce9dc;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f3f9f1,
+      #edf6eb
+    );
+
+  transition: all 0.25s ease;
+}
+
+.highest-category:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(58, 99, 66, 0.08);
+}
+
+.highest-icon {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: #e2f0df;
+
+  font-size: 13px;
+}
+
+.highest-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.highest-text span {
+  display: block;
+
+  margin-bottom: 2px;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  color: #7a9480;
+}
+
+.highest-text strong {
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 11px;
+
+  color: #174b38;
+}
+
+.highest-percent {
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  color: #4f8060;
+}
+
+
+/* =========================================
+   OVERALL FOOTER
+========================================= */
+
+.overall-chart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 14px;
+  padding-top: 12px;
+
+  border-top: 1px solid #edf1ed;
+
+  font-size: 9px;
+
+  color: #7f8c84;
+}
+
+.overall-chart-footer span:first-child {
+  color: #62826b;
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.chart-empty {
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  border: 1px dashed #d8e5d9;
+
+  border-radius: 18px;
+
+  background: #f8fbf7;
+}
+
+.empty-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  border-radius: 15px;
+
+  background: #eaf4e9;
+
+  font-size: 23px;
+}
+
+.chart-empty h3 {
+  margin: 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 18px;
+
+  color: #214c3a;
+}
+
+.chart-empty p {
+  margin: 7px 0 0;
+
+  font-size: 12px;
+
+  color: #89958d;
+}
+
+
+/* =========================================
+   BAR ANIMATION
+========================================= */
+
+@keyframes growBar {
+
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-panel {
+    min-height: auto;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .chart-header {
+    flex-direction: column;
+  }
+
+  .chart-summary {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .chart-area {
+    height: 235px;
+  }
+
+  .bars {
+    gap: 4px;
+  }
+
+  .bar {
+    width: 27px;
+  }
+
+  .bar:hover {
+    width: 31px;
+  }
+
+  .bar-label {
+    font-size: 8px;
+  }
+
+  .overall-chart-footer span:last-child {
+    display: none;
+  }
+
+}

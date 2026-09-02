@@ -1,0 +1,112 @@
+<div class="trend-chart">
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <div class="trend-header">
+
+    <div class="trend-heading">
+      <span class="trend-eyebrow">OVER TIME</span>
+      <h3>Sustainability Score</h3>
+    </div>
+
+    <span class="trend-panel-icon">📈</span>
+
+  </div>
+
+
+  @if (!hasData) {
+
+    <div class="trend-empty">
+      <div class="empty-icon">🌱</div>
+      <p>Log activities to build your score trend.</p>
+    </div>
+
+  } @else {
+
+    <!-- Current score summary -->
+
+    <div class="trend-summary">
+
+      <span class="trend-score eco-mono">
+        {{ latestScore }}
+      </span>
+
+      <span
+        class="trend-delta"
+        [class.trend-up]="trendDirection === 'up'"
+        [class.trend-down]="trendDirection === 'down'"
+        [class.trend-flat]="trendDirection === 'flat'">
+
+        @if (trendDirection === 'up') { ▲ }
+        @if (trendDirection === 'down') { ▼ }
+        @if (trendDirection === 'flat') { • }
+
+        {{ scoreDelta > 0 ? '+' : '' }}{{ scoreDelta }}
+
+      </span>
+
+    </div>
+
+    <p class="trend-caption">
+      Since {{ points[0].fullDate }}
+    </p>
+
+
+    <!-- Graph -->
+
+    <div class="trend-graph">
+
+      <svg viewBox="0 0 100 46" preserveAspectRatio="none" class="trend-svg">
+
+        <defs>
+          <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#84a98c" stop-opacity="0.45"/>
+            <stop offset="100%" stop-color="#84a98c" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Grid lines -->
+        <line x1="0" y1="6" x2="100" y2="6" class="grid-line"/>
+        <line x1="0" y1="23" x2="100" y2="23" class="grid-line"/>
+        <line x1="0" y1="38" x2="100" y2="38" class="grid-line"/>
+
+        <!-- Area -->
+        <path [attr.d]="areaPath" fill="url(#trendFill)" stroke="none"/>
+
+        <!-- Line -->
+        <path
+          [attr.d]="linePath"
+          fill="none"
+          stroke="#1b4332"
+          stroke-width="1.4"
+          vector-effect="non-scaling-stroke"
+          stroke-linejoin="round"
+          stroke-linecap="round"/>
+
+        <!-- Points -->
+        @for (p of plotted; track p.fullDate) {
+          <circle
+            [attr.cx]="p.x"
+            [attr.cy]="p.y"
+            r="1.6"
+            class="trend-dot">
+            <title>{{ p.fullDate }}: {{ p.score }}</title>
+          </circle>
+        }
+
+      </svg>
+
+    </div>
+
+    <!-- X axis labels -->
+    <div class="trend-axis">
+      @for (p of plotted; track p.fullDate) {
+        <span>{{ p.label }}</span>
+      }
+    </div>
+
+  }
+
+</div>
