@@ -1,0 +1,1057 @@
+/* ================================
+   DASHBOARD
+================================ */
+
+.eco-page {
+  width: 100%;
+}
+
+/* ================================
+   HERO
+================================ */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.hero__text {
+  background: linear-gradient(135deg, var(--pine-700), var(--pine-800));
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--sand-050);
+  box-shadow: 0 12px 30px rgba(18, 60, 45, 0.12);
+}
+
+.hero__text h1 {
+  color: var(--white);
+  font-size: 34px;
+  margin: 8px 0 12px;
+}
+
+.hero__text p {
+  color: var(--sand-100);
+  line-height: 1.7;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.hero__ring-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 250px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero__ring-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(18, 60, 45, 0.12);
+}
+
+.ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring__center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ring__value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--pine-800);
+}
+
+.ring__label {
+  font-size: 12px;
+  color: var(--ink-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.eco-tag {
+  background: #e3efdf;
+  color: #315c43;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ================================
+   SUSTAINABILITY INSIGHT
+================================ */
+
+.insight-card {
+  margin-bottom: 24px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(135deg, #f4f8f1, #edf5e9);
+  border: 1px solid #d8e6d2;
+  border-radius: var(--radius-lg);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(70, 110, 75, 0.10);
+}
+
+.insight-icon {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dcebd7;
+  border-radius: 15px;
+  font-size: 27px;
+}
+
+.insight-content {
+  flex: 1;
+}
+
+.insight-content .eco-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.insight-content h3 {
+  margin: 0 0 5px;
+  font-size: 18px;
+  color: #123c2d;
+}
+
+.insight-content p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #5f625d;
+}
+
+/* ================================
+   STAT CARDS
+================================ */
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: #84a98c;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 26px rgba(18, 60, 45, 0.10);
+}
+
+.stat-card__value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--pine-800);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.stat-card__value small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-400);
+}
+
+.stat-card__hint {
+  font-size: 12.5px;
+  color: var(--ink-400);
+}
+
+/* ================================
+   CARBON CHART
+================================ */
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.grid-2 .eco-card {
+  transition: box-shadow 0.25s ease;
+}
+
+.grid-2 .eco-card:hover {
+  box-shadow: 0 10px 25px rgba(18, 60, 45, 0.08);
+}
+
+.grid-2 h2 {
+  color: #123c2d;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+/* ================================
+   RECENT ACTIVITIES
+================================ */
+
+.recent-activities {
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.section-header h3 {
+  margin: 5px 0 0;
+  font-size: 20px;
+  color: #123c2d;
+}
+
+.activity-list {
+  width: 100%;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  column-gap: 14px;
+  min-height: 76px;
+  padding: 12px 8px;
+  border-bottom: 1px solid #eee8dc;
+  border-radius: 10px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.activity-row:hover {
+  background: #f7faf5;
+  transform: translateX(3px);
+}
+
+.activity-row:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #eef5ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.activity-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+
+.activity-info strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #123c2b;
+}
+
+.activity-info span {
+  font-size: 13px;
+  color: #555b56;
+}
+
+.activity-info small {
+  font-size: 11px;
+  color: #777a73;
+}
+
+.activity-emission {
+  min-width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: right;
+}
+
+.activity-emission strong {
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #123c2b;
+}
+
+.activity-emission span {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #777;
+}
+
+/* ================================
+   EMPTY STATE
+================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 35px 20px;
+  color: #777;
+}
+
+.empty-state p {
+  margin-bottom: 15px;
+}
+
+/* ================================
+   GOALS
+================================ */
+
+.goals-section {
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.goal-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-item {
+  padding: 18px 0;
+  border-bottom: 1px solid #eee8dc;
+}
+
+.goal-item:first-child {
+  padding-top: 5px;
+}
+
+.goal-item:last-child {
+  border-bottom: none;
+  padding-bottom: 5px;
+}
+
+.goal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 9px;
+}
+
+.goal-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.goal-info strong {
+  font-size: 15px;
+  color: #123c2d !important;
+  font-weight: 700;
+}
+
+.goal-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  line-height: 1;
+  background: #f1eadc;
+  color: #555b56 !important;
+  font-weight: 600;
+}
+
+.status-achieved {
+  background: #e2f0e4;
+  color: #4f8060 !important;
+}
+
+.goal-percent {
+  min-width: 45px;
+  text-align: right;
+  font-family: monospace;
+  font-size: 14px !important;
+  color: #123c2d !important;
+  font-weight: 700;
+}
+
+.goal-track {
+  width: 100%;
+  height: 9px;
+  margin-top: 10px;
+  background: #eee8dc;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.goal-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #84a98c, #5f8f6b);
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+
+.goal-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #555b56 !important;
+}
+
+.goal-bottom span {
+  color: #555b56 !important;
+}
+
+.goal-achieved {
+  color: #4f8060 !important;
+  font-weight: 600;
+}
+
+/* ================================
+   BUTTON HOVER
+================================ */
+
+.eco-btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.eco-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero__text {
+    padding: 28px;
+  }
+
+  .hero__text h1 {
+    font-size: 28px;
+  }
+
+  .hero__actions {
+    flex-wrap: wrap;
+  }
+
+  .insight-card {
+    padding: 18px;
+    align-items: flex-start;
+  }
+
+  .insight-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 22px;
+  }
+
+  .recent-activities,
+  .goals-section {
+    padding: 18px;
+  }
+
+  .activity-row {
+    grid-template-columns: 42px 1fr auto;
+    column-gap: 10px;
+    min-height: 65px;
+  }
+
+  .activity-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .activity-emission {
+    min-width: 70px;
+  }
+
+  .goal-info {
+    gap: 6px;
+  }
+
+  .goal-info strong {
+    font-size: 13px;
+  }
+}
+/* =========================================================
+   RECENT ACTIVITIES - CARD UI
+   ========================================================= */
+
+.recent-activities {
+  padding: 28px;
+}
+
+.recent-activities .activity-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.recent-activities .activity-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  min-height: 285px;
+  padding: 20px;
+
+  background: #ffffff;
+  border: 1px solid #eee9df;
+  border-radius: 16px;
+
+  box-shadow: 0 3px 12px rgba(30, 60, 45, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.recent-activities .activity-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(30, 60, 45, 0.10);
+}
+
+/* Activity icon */
+
+.recent-activities .activity-icon {
+  width: 72px;
+  height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #edf5ed;
+  border-radius: 16px;
+
+  font-size: 34px;
+  margin-bottom: 18px;
+}
+
+/* Activity information */
+
+.recent-activities .activity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  flex: 1;
+}
+
+.recent-activities .activity-info strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: #123d2d;
+}
+
+.recent-activities .activity-info span {
+  font-size: 15px;
+  color: #333;
+}
+
+.recent-activities .activity-info small {
+  font-size: 13px;
+  color: #777;
+  margin-top: 5px;
+}
+
+/* Carbon value */
+
+.recent-activities .activity-emission {
+  margin: 18px -20px -20px;
+  padding: 18px 20px;
+
+  background: #f5f7f1;
+
+  border-radius: 0 0 16px 16px;
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recent-activities .activity-emission strong {
+  font-size: 24px;
+  color: #3f7d55;
+}
+
+.recent-activities .activity-emission span {
+  font-size: 13px;
+  color: #555;
+}
+
+
+/* =========================================================
+   GOAL PROGRESS - CARD UI
+   ========================================================= */
+
+.goals-section {
+  padding: 28px;
+}
+
+.goals-section .goal-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+
+  margin-top: 22px;
+}
+
+.goals-section .goal-item {
+  padding: 22px;
+
+  background: #ffffff;
+  border: 1px solid #eee9df;
+  border-radius: 16px;
+
+  box-shadow: 0 3px 12px rgba(30, 60, 45, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.goals-section .goal-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(30, 60, 45, 0.10);
+}
+
+/* Goal heading */
+
+.goals-section .goal-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.goals-section .goal-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.goals-section .goal-info strong {
+  font-size: 17px;
+  color: #123d2d;
+}
+
+/* Status */
+
+.goals-section .goal-status {
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  background: #eef5ed;
+  color: #4f7f5e;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.goals-section .goal-status.status-achieved {
+  background: #e5f2e7;
+  color: #39724c;
+}
+
+/* Percentage */
+
+.goals-section .goal-percent {
+  font-size: 15px;
+  color: #123d2d;
+  white-space: nowrap;
+}
+
+/* Progress bar */
+
+.goals-section .goal-track {
+  width: 100%;
+  height: 9px;
+
+  margin-top: 22px;
+
+  background: #eee9df;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.goals-section .goal-fill {
+  height: 100%;
+
+  background: #6f9f7d;
+  border-radius: 20px;
+
+  transition: width 0.4s ease;
+}
+
+/* Goal bottom */
+
+.goals-section .goal-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 12px;
+
+  font-size: 13px;
+  color: #777;
+}
+
+.goals-section .goal-achieved {
+  color: #39724c;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .recent-activities .activity-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+@media (max-width: 700px) {
+
+  .recent-activities .activity-list,
+  .goals-section .goal-list {
+    grid-template-columns: 1fr;
+  }
+
+  .recent-activities .activity-row {
+    min-height: 250px;
+  }
+
+  .goals-section .goal-top {
+    flex-direction: column;
+  }
+
+}
+/* ================================
+   RECENT ACTIVITIES
+   ================================ */
+
+.recent-activities {
+  width: calc(100% - 40px);
+  margin: 30px 20px;
+  padding: 28px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Header */
+.recent-activities .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* Activity cards container */
+.activity-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Individual activity card */
+.activity-row {
+  min-width: 0;
+  box-sizing: border-box;
+
+  padding: 24px 20px;
+  border: 1px solid #e6e2d8;
+  border-radius: 14px;
+  background: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  gap: 12px;
+
+  min-height: 260px;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Icon */
+.activity-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+  background: #f1f6f2;
+
+  font-size: 28px;
+}
+
+/* Activity information */
+.activity-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  width: 100%;
+}
+
+.activity-info strong {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.activity-info span {
+  font-size: 14px;
+  color: #777;
+}
+
+.activity-info small {
+  font-size: 13px;
+  color: #999;
+}
+
+/* Emission */
+.activity-emission {
+  margin-top: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.activity-emission strong {
+  font-size: 26px;
+  font-family: monospace;
+}
+
+.activity-emission span {
+  font-size: 12px;
+  color: #888;
+}
+
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 1100px) {
+
+  .activity-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 800px) {
+
+  .recent-activities {
+    width: calc(100% - 24px);
+    margin: 20px 12px;
+    padding: 20px;
+  }
+
+  .activity-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 550px) {
+
+  .activity-list {
+    grid-template-columns: 1fr;
+  }
+
+  .recent-activities {
+    width: calc(100% - 20px);
+    margin: 15px 10px;
+  }
+
+}
+/* Recent Activities */
+.recent-activities {
+  width: 92%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 28px;
+  box-sizing: border-box;
+  border-radius: 18px;
+}
+
+/* Goal Progress */
+.goals-section {
+  width: 92%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 28px;
+  box-sizing: border-box;
+  border-radius: 18px;
+}
+
+/* Activity cards should stay inside the main card */
+.activity-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Individual activity card */
+.activity-row {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 22px;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+}
+
+/* Goal cards */
+.goal-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.goal-item {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 22px;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+}
+
+/* Prevent content from touching card borders */
+.activity-info,
+.goal-info {
+  min-width: 0;
+}
+
+.activity-info strong,
+.activity-info span,
+.activity-info small,
+.goal-info strong {
+  display: block;
+  overflow-wrap: break-word;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+
+  .activity-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .goal-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .recent-activities,
+  .goals-section {
+    width: 94%;
+    padding: 20px;
+  }
+
+  .activity-list {
+    grid-template-columns: 1fr;
+  }
+}

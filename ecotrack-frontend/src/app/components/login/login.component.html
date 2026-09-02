@@ -1,0 +1,72 @@
+<div class="login-page">
+
+  <form
+    class="eco-card login-card"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    novalidate>
+
+    <span class="login-card__mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+        <path
+          d="M12 2C7 2 4 6 4 11c0 6 4 10 8 11 4-1 8-5 8-11 0-5-3-9-8-9Z"
+          fill="#52796f"/>
+        <path
+          d="M12 6v13"
+          stroke="#0f2e22"
+          stroke-width="1.4"
+          stroke-linecap="round"/>
+      </svg>
+    </span>
+
+    <h1>Welcome Back</h1>
+    <p>Login to your EcoTrack account.</p>
+
+    <!-- Email -->
+    <label class="field">
+      <span>Email</span>
+
+      <input
+        type="email"
+        formControlName="email"
+        placeholder="Enter your email"
+        autocomplete="email">
+
+      <span
+        class="field__error"
+        *ngIf="submitted() && f.email.invalid">
+        Enter a valid email.
+      </span>
+    </label>
+
+    <!-- Password -->
+    <label class="field">
+      <span>Password</span>
+
+      <input
+        type="password"
+        formControlName="password"
+        placeholder="Enter your password"
+        autocomplete="current-password">
+
+      <span
+        class="field__error"
+        *ngIf="submitted() && f.password.invalid">
+        Password is required.
+      </span>
+    </label>
+
+    <button
+      type="submit"
+      class="eco-btn eco-btn--primary login-card__submit">
+      Login
+    </button>
+
+    <p class="signup-text">
+      Don't have an account?
+      <a routerLink="/register">Create Account</a>
+    </p>
+
+  </form>
+
+</div>

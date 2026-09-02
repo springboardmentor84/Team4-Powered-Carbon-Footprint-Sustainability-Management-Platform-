@@ -1,0 +1,400 @@
+<div class="eco-page">
+
+  <section class="hero">
+
+    <div class="hero__text">
+
+      <span class="eco-eyebrow">
+        Welcome back, {{ username }}
+      </span>
+
+      <h1>Your footprint, this week</h1>
+
+      <p>
+        You've logged
+        <strong class="eco-mono">
+          {{ totalCarbon() | number:'1.1-1' }} kg CO₂e
+        </strong>
+
+        across {{ activityList().length }} activities.
+
+        {{ activeGoals() }} of
+        {{ goalList().length }}
+        goals are active.
+
+      </p>
+
+      <div class="hero__actions">
+
+        <a
+          [routerLink]="['/carbon-tracker']"
+          class="eco-btn eco-btn--primary">
+
+          Log an activity
+
+        </a>
+
+        <a
+          [routerLink]="['/reports']"
+          class="eco-btn eco-btn--ghost">
+
+          View reports
+
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="hero__ring-card eco-card">
+
+      <div class="ring">
+
+        <svg viewBox="0 0 120 120" width="150" height="150">
+
+          <circle
+            cx="60"
+            cy="60"
+            r="54"
+            fill="none"
+            stroke="#efe9da"
+            stroke-width="9"/>
+
+          <circle
+            cx="60"
+            cy="60"
+            r="54"
+            fill="none"
+            stroke="#84a98c"
+            stroke-width="9"
+            stroke-linecap="round"
+            [attr.stroke-dasharray]="2 * 3.14159 * 54"
+            [attr.stroke-dashoffset]="
+            (2 * 3.14159 * 54) -
+            (ecoScore() / 1000) * (2 * 3.14159 * 54)
+            "
+            transform="rotate(-90 60 60)"/>
+
+          <circle
+            cx="60"
+            cy="60"
+            r="40"
+            fill="none"
+            stroke="#84a98c"
+            stroke-width="1"
+            stroke-dasharray="2 4"
+            opacity="0.6"/>
+
+        </svg>
+
+        <div class="ring__center">
+
+          <span class="ring__value eco-mono">
+
+           {{ ecoScore() }}
+          </span>
+
+          <span class="ring__label">
+
+            Eco Score
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <span class="eco-tag">
+
+        Eco Warrior
+
+      </span>
+
+    </div>
+
+  </section>
+ 
+<!-- Sustainability Insight -->
+<section class="eco-card insight-card">
+
+  <div class="insight-icon">
+    {{ sustainabilityInsight().icon }}
+  </div>
+
+  <div class="insight-content">
+    <span class="eco-eyebrow">SUSTAINABILITY INSIGHT</span>
+
+    <h3>{{ sustainabilityInsight().title }}</h3>
+
+    <p>{{ sustainabilityInsight().message }}</p>
+  </div>
+
+</section>
+
+
+  <section class="grid-3">
+
+    <div class="eco-card stat-card">
+
+      <span class="eco-eyebrow">
+
+        Carbon Emission
+
+      </span>
+
+      <span class="stat-card__value eco-mono">
+
+        {{ totalCarbon() | number:'1.1-1' }}
+
+        <small>kg CO₂e</small>
+
+      </span>
+
+      <span class="stat-card__hint">
+
+        {{ activityList().length }} activities logged
+
+      </span>
+
+    </div>
+
+    <div class="eco-card stat-card">
+
+      <span class="eco-eyebrow">
+
+        Active Goals
+
+      </span>
+
+      <span class="stat-card__value eco-mono">
+
+        {{ activeGoals() }}
+
+        <small>/ {{ goalList().length }}</small>
+
+      </span>
+
+      <span class="stat-card__hint">
+
+        Goals in progress
+
+      </span>
+
+    </div>
+
+    <div class="eco-card stat-card">
+
+      <span class="eco-eyebrow">
+
+        Achieved Goals
+
+      </span>
+
+      <span class="stat-card__value eco-mono">
+
+        {{ achievedGoals() }}
+
+      </span>
+
+      <span class="stat-card__hint">
+
+        Successfully completed
+
+      </span>
+
+    </div>
+
+  </section>
+  <section class="grid-2">
+
+  <div class="eco-card">
+
+    <h2>Carbon Emission Overview</h2>
+
+    <eco-carbon-chart
+      [activities]="activityList()">
+    </eco-carbon-chart>
+
+  </div>
+
+</section>
+
+</div>
+<!-- Recent Activities -->
+<section class="eco-card recent-activities">
+
+  <div class="section-header">
+    <div>
+      <span class="eco-eyebrow">Activity History</span>
+      <h3>Recent Activities</h3>
+    </div>
+
+    <a
+      [routerLink]="['/carbon-tracker']"
+      class="eco-btn eco-btn--ghost">
+      View all
+    </a>
+  </div>
+
+  @if (activityList().length === 0) {
+
+    <div class="empty-state">
+      <p>No activities logged yet.</p>
+      <a
+        [routerLink]="['/carbon-tracker']"
+        class="eco-btn eco-btn--primary">
+        Log your first activity
+      </a>
+    </div>
+
+  } @else {
+
+    <div class="activity-list">
+
+      @for (
+        activity of activityList().slice().reverse().slice(0, 5);
+        track activity.id
+      ) {
+
+        <div class="activity-row">
+
+          <div class="activity-icon">
+            {{ activity.category === 'Transportation' ? '🚗' :
+               activity.category === 'Electricity Usage' ? '⚡' :
+               activity.category === 'Food' ? '🍽️' :
+               activity.category === 'Waste' ? '♻️' : '🌱' }}
+          </div>
+
+          <div class="activity-info">
+
+            <strong>
+              {{ activity.category || 'Other' }}
+            </strong>
+
+            <span>
+              {{ activity.description || 'Carbon activity' }}
+            </span>
+
+            <small>
+              {{ activity.activityDate }}
+            </small>
+
+          </div>
+
+          <div class="activity-emission">
+            <strong>
+              {{ activity.carbonEmission | number:'1.2-2' }}
+            </strong>
+
+            <span>kg CO₂e</span>
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</section>
+<section class="eco-card goals-section">
+
+  <div class="section-header">
+    <div>
+      <span class="eco-eyebrow">YOUR GOALS</span>
+      <h3>Goal Progress</h3>
+    </div>
+
+    <a
+      [routerLink]="['/goals']"
+      class="eco-btn eco-btn--ghost">
+      View all
+    </a>
+  </div>
+
+  @if (goalList().length === 0) {
+
+    <div class="empty-state">
+      <p>No goals created yet.</p>
+
+      <a
+        [routerLink]="['/goals']"
+        class="eco-btn eco-btn--primary">
+        Create a goal
+      </a>
+    </div>
+
+  } @else {
+
+    <div class="goal-list">
+
+      @for (goal of goalList(); track goal.id) {
+
+        <div class="goal-item">
+
+          <!-- Goal Header -->
+          <div class="goal-top">
+
+            <div class="goal-info">
+
+              <strong>
+                {{ goal.title || goal.name || 'Carbon Reduction Goal' }}
+              </strong>
+
+              <span
+                class="goal-status"
+                [class.status-achieved]="goal.status === 'Achieved'">
+
+                {{ goal.status || 'In Progress' }}
+
+              </span>
+
+            </div>
+
+           <strong class="goal-percent">
+  {{ goal.targetKg ? ((goal.currentKg / goal.targetKg) * 100 | number:'1.0-0') : 0 }}%
+</strong>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="goal-track">
+
+            <div
+  class="goal-fill"
+  [style.width.%]="
+    goal.targetKg
+      ? Math.min(100, (goal.currentKg / goal.targetKg) * 100)
+      : 0
+  ">
+</div>
+          </div>
+
+          <!-- Goal Details -->
+          <div class="goal-bottom">
+
+          <span>
+  Target: {{ goal.targetKg || 0 }} {{ goal.unit }}
+</span>
+            <span
+              [class.goal-achieved]="goal.status === 'Achieved'">
+
+              @if (goal.status === 'Achieved') {
+                ✓ Achieved
+              } @else {
+                In progress
+              }
+
+            </span>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</section>
