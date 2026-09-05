@@ -1,3 +1,36 @@
+/* =========================================
+   TWO-COLUMN LAYOUT — MAIN + TREND SIDEBAR
+========================================= */
+
+.reports-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: 24px;
+}
+
+.reports-main {
+  min-width: 0;
+}
+
+.reports-side {
+  position: sticky;
+  top: 24px;
+}
+
+.trend-card {
+  padding: 22px;
+}
+
+@media (max-width: 900px) {
+  .reports-layout {
+    grid-template-columns: 1fr;
+  }
+  .reports-side {
+    position: static;
+  }
+}
+
 .quick-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

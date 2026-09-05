@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { CarbonService } from '../../services/carbon.service';
 import { GoalService } from '../../services/goal.service';
 import { CarbonChartComponent } from '../carbon-chart/carbon-chart.component';
+import { EmissionPieChartComponent } from '../emission-pie-chart/emission-pie-chart.component';
 import { MockDataService } from '../../services/mock-data.service';
 import { RecommendationService } from '../../services/recommendation.service';
 import { EcoBotComponent } from '../eco-bot/eco-bot.component';
@@ -24,6 +25,7 @@ import { EcoBotComponent } from '../eco-bot/eco-bot.component';
   DecimalPipe,
   RouterLink,
   CarbonChartComponent,
+  EmissionPieChartComponent,
   EcoBotComponent
 ],
   templateUrl: './dashboard.component.html',
