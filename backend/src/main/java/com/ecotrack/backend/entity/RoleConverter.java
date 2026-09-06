@@ -3,8 +3,6 @@ package com.ecotrack.backend.entity;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-import java.util.Locale;
-
 @Converter(autoApply = true)
 public class RoleConverter implements AttributeConverter<Role, String> {
 
@@ -13,7 +11,7 @@ public class RoleConverter implements AttributeConverter<Role, String> {
         if (attribute == null) {
             return null;
         }
-        return attribute.name().toLowerCase(Locale.ROOT);
+        return attribute.name();
     }
 
     @Override
@@ -21,6 +19,6 @@ public class RoleConverter implements AttributeConverter<Role, String> {
         if (dbData == null) {
             return null;
         }
-        return Role.valueOf(dbData.toUpperCase(Locale.ROOT));
+        return Role.valueOf(dbData.toUpperCase());
     }
 }

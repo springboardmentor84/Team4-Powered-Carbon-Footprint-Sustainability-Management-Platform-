@@ -9,4 +9,5 @@ import java.util.List;
 public interface CarbonActivityRepository extends JpaRepository<CarbonActivity, Long> {
 
     List<CarbonActivity> findByUser(User user);
+    List<CarbonActivity> findByUser_Email(String email);
 }

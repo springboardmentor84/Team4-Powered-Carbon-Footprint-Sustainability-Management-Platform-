@@ -90,6 +90,69 @@ public class OllamaService {
                     + "Please try again.";
         }
     }
+    public String generateRecommendation(
+            String category,
+            double emission
+    ) {
+
+        String prompt = """
+            You are EcoBot, the AI sustainability assistant for EcoTrack.
+
+            Analyze the user's carbon footprint information.
+
+            Category: %s
+            Carbon emission: %.2f kg CO2e
+
+            Give one personalized and practical sustainability recommendation.
+            Keep it simple and actionable.
+            Do not use bullet points.
+            Maximum 2 sentences.
+            """.formatted(category, emission);
+
+        try {
+
+            String jsonBody = objectMapper.writeValueAsString(
+                    new OllamaRequest(
+                            "llama3.2",
+                            prompt,
+                            false
+                    )
+            );
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:11434/api/generate"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
+
+            HttpResponse<String> response =
+                    httpClient.send(
+                            request,
+                            HttpResponse.BodyHandlers.ofString()
+                    );
+
+            if (response.statusCode() != 200) {
+
+                throw new RuntimeException(
+                        "Ollama returned status: "
+                                + response.statusCode()
+                );
+            }
+
+            JsonNode jsonResponse =
+                    objectMapper.readTree(response.body());
+
+            return jsonResponse
+                    .get("response")
+                    .asText();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return "Keep following sustainable practices to reduce your carbon footprint.";
+        }
+    }
     public String personalizedChat(
             String userMessage,
             String email,

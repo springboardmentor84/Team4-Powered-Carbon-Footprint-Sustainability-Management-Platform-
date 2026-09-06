@@ -21,7 +21,7 @@ public class RecommendationService {
     private final RecommendationRepository recommendationRepository;
     private final CarbonActivityRepository carbonActivityRepository;
     private final UserRepository userRepository;
-    private final GeminiService geminiService;
+    private final OllamaService ollamaService;
 
     public Recommendation generateRecommendation(String email) {
 
@@ -77,7 +77,7 @@ public class RecommendationService {
         double emission = highest.getValue();
 
         String recommendationText =
-                geminiService.generateRecommendation(category, emission);
+                ollamaService.generateRecommendation(category, emission);
 
         double impactScore =
                 calculateImpactScore(emission);
