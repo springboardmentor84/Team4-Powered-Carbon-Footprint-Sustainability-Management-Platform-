@@ -49,8 +49,7 @@ export class MockDataService {
   private readonly apiUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
-
-  readonly currentEcoScore = signal<number>(742);
+readonly currentEcoScore = signal<number>(742);
   private readonly user = signal<UserProfile>({
     id: 'u-1024',
     name: 'Asha Mehta',

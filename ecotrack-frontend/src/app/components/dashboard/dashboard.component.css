@@ -240,7 +240,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .analytics-grid .eco-card {
@@ -983,7 +983,7 @@
 .recent-activities {
   width: 92%;
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 20px auto;   /* 40px → 20px */
   padding: 28px;
   box-sizing: border-box;
   border-radius: 18px;
@@ -1591,4 +1591,28 @@
 .recommendation-heading:hover h2 {
   color: #245d40;
   transform: translateX(2px);
+}
+/* Reduce space between Emission Analytics and Recent Activities */
+.analytics-grid {
+  margin-bottom: 10px !important;
+}
+
+.recent-activities {
+  margin-top: 15px !important;
+}
+.recent-activities {
+  margin-top: 24px !important;
+}
+/* =========================================
+   FULL WIDTH DASHBOARD SECTIONS
+   ========================================= */
+
+.recent-activities,
+.goals-section {
+  width: 100%;
+  max-width: none;
+  margin: 24px 0;
+  padding: 28px;
+  box-sizing: border-box;
+  border-radius: 18px;
 }

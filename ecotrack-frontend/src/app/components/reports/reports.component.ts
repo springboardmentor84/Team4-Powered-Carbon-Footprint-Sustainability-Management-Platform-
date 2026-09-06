@@ -4,6 +4,7 @@ import { MockDataService } from '../../services/mock-data.service';
 import { CarbonService } from '../../services/carbon.service';
 import { GoalService } from '../../services/goal.service';
 import { Report } from '../../models/data.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   SustainabilityTrendChartComponent,
   TrendPoint,
@@ -20,14 +21,16 @@ export class ReportsComponent implements OnInit {
   private data = inject(MockDataService);
   private carbonService = inject(CarbonService);
   private goalService = inject(GoalService);
-
+private http = inject(HttpClient);
   readonly reports = this.data.getReports();
-  readonly reportTypes: Report['type'][] = [
-    'Carbon Footprint',
-    'Goal Achievement',
-    'Sustainability',
-    'Challenge Participation',
-  ];
+  readonly reportTypes: string[] = [
+  'Carbon Footprint',
+  'Goal Achievement',
+  'Sustainability',
+  'Challenge Participation',
+  'Monthly Carbon Summary',
+  'Emission Breakdown',
+];
   readonly generating = signal<string | null>(null);
 
   readonly activityList = signal<any[]>([]);
@@ -111,16 +114,98 @@ export class ReportsComponent implements OnInit {
   });
 
   requestReport(type: string) {
-    this.generating.set(type);
-    setTimeout(() => this.generating.set(null), 1400);
+  const email = localStorage.getItem('email');
+  const token = localStorage.getItem('token');
+
+  if (!email || !token) {
+    alert('Please login again.');
+    return;
   }
 
-  download(report: Report) {
-    // Placeholder for a real call to the Report Service, e.g.:
-    // this.http.get(`/api/reports/${report.id}/download`, { responseType: 'blob' })
-    alert(`Downloading "${report.title}" as ${report.format}…`);
+  this.generating.set(type);
+
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
+
+  this.http.get(
+    `http://localhost:8080/api/reports/generate`,
+    {
+      headers,
+      params: {
+        type: type,
+        email: email
+      },
+      responseType: 'blob'
+    }
+  ).subscribe({
+    next: (blob) => {
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${type.replace(/ /g, '_')}_Report.pdf`;
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+      this.generating.set(null);
+    },
+
+    error: (err) => {
+      console.error('Report generation failed:', err);
+      this.generating.set(null);
+      alert('Failed to generate report.');
+    }
+  });
+}
+ download(report: Report) {
+  const email = localStorage.getItem('email');
+  const token = localStorage.getItem('token');
+
+  if (!email || !token) {
+    alert('Please login again.');
+    return;
   }
 
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
+
+  const isExcel = report.format.toUpperCase() === 'EXCEL';
+
+  const endpoint = isExcel
+    ? 'http://localhost:8080/api/reports/generate-excel'
+    : 'http://localhost:8080/api/reports/generate';
+
+  const extension = isExcel ? 'xlsx' : 'pdf';
+
+  this.http.get(endpoint, {
+    headers,
+    params: {
+      type: report.type,
+      email: email
+    },
+    responseType: 'blob'
+  }).subscribe({
+    next: (blob) => {
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download =
+        `${report.type.replace(/ /g, '_')}_Report.${extension}`;
+
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+    },
+
+    error: (err) => {
+      console.error('Report download failed:', err);
+      alert('Failed to download report.');
+    }
+  });
+}
   ngOnInit(): void {
 
     const email = localStorage.getItem('email');

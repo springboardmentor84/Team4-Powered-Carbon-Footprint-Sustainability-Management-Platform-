@@ -112,11 +112,12 @@ export class DashboardComponent implements OnInit {
   });
 
   // Sync Eco Score
-  private syncEcoScore = effect(() => {
-    this.data.currentEcoScore.set(
-      this.ecoScore()
-    );
-  });
+ private syncEcoScore = effect(
+  () => {
+    this.data.currentEcoScore.set(this.ecoScore());
+  },
+  { allowSignalWrites: true }
+);
 
   // Sustainability Insight
   readonly sustainabilityInsight = computed(() => {
