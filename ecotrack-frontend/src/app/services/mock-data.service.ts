@@ -133,14 +133,57 @@ export class MockDataService {
   }
 
   /** Marks a challenge/task complete, awards its XP, and unlocks any tied badge. */
-  completeChallenge(id: string) {
-    const headers = this.authHeaders();
-    if (!headers) return;
-    this.http.put(`${this.apiUrl}/challenges/${id}/progress`, null, {
-      headers, params: { progress: 100 }
-    }).subscribe(() => this.loadCommunityData());
+  /** Increases challenge progress by 25% each time the task is completed. */
+completeChallenge(id: string) {
+  const headers = this.authHeaders();
+  if (!headers) return;
+
+  const challenge = this.challenges().find(c => c.id === id);
+
+  if (!challenge) return;
+
+  const currentProgress = Number(challenge.progress) || 0;
+
+  if (currentProgress >= 100) {
+    return;
   }
 
+  const newProgress = Math.min(currentProgress + 25, 100);
+
+  this.http.put(`${this.apiUrl}/challenges/${id}/progress`, null, {
+    headers,
+    params: { progress: newProgress }
+  }).subscribe({
+    next: () => this.loadCommunityData(),
+    error: (err) => {
+      console.error('Failed to update challenge progress:', err);
+    }
+  });
+}
+updateChallengeProgress(id: string) {
+  const headers = this.authHeaders();
+  if (!headers) return;
+
+  const challenge = this.challenges().find(c => c.id === id);
+
+  if (!challenge) return;
+
+  const currentProgress = Number(challenge.progress) || 0;
+
+  if (currentProgress >= 100) return;
+
+  const newProgress = Math.min(currentProgress + 25, 100);
+
+  this.http.put(`${this.apiUrl}/challenges/${id}/progress`, null, {
+    headers,
+    params: { progress: newProgress }
+  }).subscribe({
+    next: () => this.loadCommunityData(),
+    error: (err) => {
+      console.error('Failed to update progress:', err);
+    }
+  });
+}
   /** Total XP required to fully complete a goal/task, derived from its target size. */
   goalXpTotal(goal: { targetKg: number }): number {
     const target = Number(goal.targetKg) || 0;

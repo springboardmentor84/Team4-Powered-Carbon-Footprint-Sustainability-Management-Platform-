@@ -45,10 +45,24 @@
                 <span class="completed-pill">✓ Completed</span>
               } @else {
                 @if (c.joined) {
-                  <button class="eco-btn eco-btn--amber" (click)="complete(c.id)">
-                    Complete Task
-                  </button>
-                }
+  @if (c.progress < 100) {
+    <button
+      class="eco-btn"
+      (click)="updateProgress(c.id)"
+    >
+      +25% Progress
+    </button>
+
+    @if (c.progress >= 75) {
+      <button
+        class="eco-btn eco-btn--amber"
+        (click)="complete(c.id)"
+      >
+        Complete Task
+      </button>
+    }
+  }
+}
                 <button
                   class="eco-btn"
                   [class.eco-btn--primary]="!c.joined"

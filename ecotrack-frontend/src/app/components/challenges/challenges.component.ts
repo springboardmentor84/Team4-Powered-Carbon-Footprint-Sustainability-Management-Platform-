@@ -58,6 +58,9 @@ export class ChallengesComponent implements OnInit {
   complete(id: string) {
     this.data.completeChallenge(id);
   }
+  updateProgress(id: string) {
+  this.data.updateChallengeProgress(id);
+}
 
   initials(name: string): string {
     return name
