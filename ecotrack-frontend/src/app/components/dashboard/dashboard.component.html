@@ -264,6 +264,196 @@
   </div>
 
 </section>
+<!-- =========================================
+     CARBON TREE + ECO CHALLENGE WHEEL
+     ========================================= -->
+
+<section class="eco-adventure">
+
+  <!-- CARBON TREE -->
+  <div class="eco-tree-card">
+
+    <div class="eco-section-label">
+      <span>🌱</span>
+      YOUR CARBON TREE
+    </div>
+
+    <div class="tree-content">
+
+      <div class="tree-visual">
+
+        <div class="tree-crown">
+
+  @if (treeProgress() >= 25) {
+    <span class="leaf leaf-1">🌿</span>
+  }
+
+  @if (treeProgress() >= 40) {
+    <span class="leaf leaf-2">🌿</span>
+  }
+
+  @if (treeProgress() >= 50) {
+    <span class="leaf leaf-3">🍃</span>
+  }
+
+  @if (treeProgress() >= 60) {
+    <span class="leaf leaf-4">🌿</span>
+  }
+
+  @if (treeProgress() >= 70) {
+    <span class="leaf leaf-5">🍃</span>
+  }
+
+</div>
+
+<div class="tree-trunk">
+  {{ treeIcon() }}
+</div>
+
+        <div class="tree-ground">
+          ━━━━━━━━
+        </div>
+
+      </div>
+
+      <div class="tree-info">
+
+        <h2>Watch your impact grow.</h2>
+
+        <p class="tree-message">
+          Every sustainable choice helps your tree become stronger.
+        </p>
+
+        <div class="tree-progress-header">
+          <span>Tree Growth</span>
+          <strong>{{ treeProgress() }}%</strong>
+        </div>
+
+        <div class="tree-progress">
+
+         <div
+  class="tree-progress-fill"
+  [style.width.%]="treeProgress()">
+</div>
+
+        </div>
+
+        <div class="tree-stats">
+
+          <div>
+            <strong>🌱 {{ activityList().length }}</strong>
+            <span>Activities</span>
+          </div>
+
+          <div>
+            <strong>🌍 {{ ecoScore() }}</strong>
+            <span>Eco Score</span>
+          </div>
+
+          <div>
+            <strong>🎯 {{ achievedGoals() }}</strong>
+            <span>Goals Achieved</span>
+          </div>
+
+        </div>
+
+        <p class="tree-footer">
+          🌍 Keep going — your green journey is growing!
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- CHALLENGE WHEEL -->
+  <div class="challenge-wheel-card">
+
+    <div class="eco-section-label">
+      <span>🎡</span>
+      ECO CHALLENGE
+    </div>
+
+    <h2>Spin for a greener day.</h2>
+
+    <p class="wheel-description">
+      Get a random eco-friendly challenge and make one small
+      change today.
+    </p>
+
+    <div class="wheel-wrapper">
+
+      <div class="wheel-pointer">
+        ▼
+      </div>
+
+      <div
+  class="challenge-wheel"
+  [style.transform]="'rotate(' + wheelRotation + 'deg)'">
+
+        <div class="wheel-item wheel-item-1">🚲</div>
+
+        <div class="wheel-item wheel-item-2">💡</div>
+
+        <div class="wheel-item wheel-item-3">♻️</div>
+
+        <div class="wheel-item wheel-item-4">🥗</div>
+
+        <div class="wheel-item wheel-item-5">🚿</div>
+
+        <div class="wheel-item wheel-item-6">🌱</div>
+
+        <div class="wheel-center">
+          🌍
+        </div>
+
+      </div>
+
+    </div>
+
+    <button
+      class="spin-button"
+      type="button"
+      (click)="spinChallenge()"
+      [disabled]="isWheelSpinning">
+
+      {{ isWheelSpinning ? 'SPINNING...' : '🎡 SPIN' }}
+
+    </button>
+
+    @if (selectedChallenge) {
+
+      <div class="challenge-result">
+
+        <span class="result-icon">
+          {{ selectedChallenge.icon }}
+        </span>
+
+        <div>
+
+          <small>
+            TODAY'S CHALLENGE
+          </small>
+
+          <strong>
+            {{ selectedChallenge.title }}
+          </strong>
+
+          <p>
+            {{ selectedChallenge.description }}
+          </p>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>
 <section class="grid-3">
 
     <div class="eco-card stat-card">

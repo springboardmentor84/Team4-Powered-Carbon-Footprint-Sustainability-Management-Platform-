@@ -27,6 +27,9 @@ export class ProfileComponent implements OnInit {
 
   // Existing mock data
   readonly user = this.data.getUser();
+  readonly currentEcoScore = this.data.currentEcoScore;
+
+memberSince = '';
   readonly badges = this.data.getBadges();
 
   // Authentication
@@ -82,6 +85,11 @@ export class ProfileComponent implements OnInit {
       next: (profile) => {
 
         console.log('Profile loaded from backend:', profile);
+        const createdAt = profile?.user?.createdAt;
+
+if (createdAt) {
+  this.memberSince = new Date(createdAt).toISOString().split('T')[0];
+}
 
         const fullName =
           profile?.user?.fullName ||

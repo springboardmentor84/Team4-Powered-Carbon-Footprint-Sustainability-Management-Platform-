@@ -23,9 +23,15 @@
         <button class="eco-btn eco-btn--ghost" (click)="logout()">Log out</button>
       }
       <div class="summary__stats">
-        <div><strong class="eco-mono">{{ user().ecoScore }}</strong><span>Eco Score</span></div>
+<div>
+  <strong class="eco-mono">{{ currentEcoScore() }}</strong>
+  <span>Eco Score</span>
+</div>
         <div><strong>{{ user().level }}</strong><span>Level</span></div>
-        <div><strong>{{ user().joinedOn }}</strong><span>Member since</span></div>
+       <div>
+  <strong>{{ memberSince || '—' }}</strong>
+  <span>Member since</span>
+</div>
       </div>
       <div class="interests">
         @for (i of user().interests; track i) {
@@ -56,7 +62,10 @@
         <h3>Badges</h3>
         <div class="badge-grid">
           @for (b of badges(); track b.id) {
-            <div class="badge" [class.badge--locked]="!b.earned">
+            <div
+  class="badge"
+  [class.badge--locked]="!b.earned"
+  [class.badge--unlocked]="b.earned">
               <span class="badge__icon">{{ b.earned ? '🏅' : '🔒' }}</span>
               <span class="badge__name">{{ b.name }}</span>
               <span class="badge__desc">{{ b.description }}</span>

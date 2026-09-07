@@ -287,7 +287,141 @@ readonly recommendationPercentage = computed(() => {
 
   return Math.round((categoryCarbon / total) * 100);
 });
+  // ==============================
+// CARBON TREE + CHALLENGE WHEEL
+// ==============================
 
+readonly treeProgress = computed(() => {
+
+  const activities = this.activityList().length;
+  const achieved = this.achievedGoals();
+
+  if (activities === 0 && achieved === 0) {
+    return 0;
+  }
+
+  const activityGrowth = Math.min(activities * 8, 60);
+  const goalGrowth = Math.min(achieved * 10, 40);
+
+  return Math.min(
+    activityGrowth + goalGrowth,
+    100
+  );
+});
+readonly treeIcon = computed(() => {
+
+  const progress = this.treeProgress();
+
+  if (progress === 0) {
+    return '🌱';
+  }
+
+  if (progress < 25) {
+    return '🌿';
+  }
+
+  if (progress < 50) {
+    return '🌳';
+  }
+
+  if (progress < 75) {
+    return '🌳🌿';
+  }
+
+  return '🌳🌳';
+});
+
+  isWheelSpinning = false;
+  wheelRotation = 0;
+
+  selectedChallenge: {
+    icon: string;
+    title: string;
+    description: string;
+  } | null = null;
+
+  ecoChallenges = [
+    {
+      icon: '🚲',
+      title: 'Green Commuter',
+      description:
+        'Try walking, cycling or public transport for your next trip.'
+    },
+    {
+      icon: '💡',
+      title: 'Energy Saver',
+      description:
+        'Switch off lights and appliances that are not being used.'
+    },
+    {
+      icon: '♻️',
+      title: 'Zero Waste Move',
+      description:
+        'Avoid one single-use item today.'
+    },
+    {
+      icon: '🥗',
+      title: 'Green Meal',
+      description:
+        'Choose a more plant-based meal today.'
+    },
+    {
+      icon: '🚿',
+      title: 'Water Saver',
+      description:
+        'Take a shorter shower and save water today.'
+    },
+    {
+      icon: '🌱',
+      title: 'Nature Boost',
+      description:
+        'Spend a few minutes caring for a plant or green space.'
+    }
+  ];
+
+spinChallenge(): void {
+
+  if (this.isWheelSpinning) {
+    return;
+  }
+
+  this.isWheelSpinning = true;
+  this.selectedChallenge = null;
+
+  // Pick one challenge
+  const randomIndex = Math.floor(
+    Math.random() * this.ecoChallenges.length
+  );
+
+  /*
+   * Each wheel section = 60 degrees.
+   *
+   * We calculate exactly how much the wheel
+   * must rotate so the selected challenge
+   * comes to the pointer at the top.
+   */
+  const currentRotation = this.wheelRotation % 360;
+
+  const targetAngle = randomIndex * 60;
+
+  let rotationNeeded =
+    360 - ((currentRotation + targetAngle) % 360);
+
+  // Add multiple full rotations for spinning effect
+  rotationNeeded += 1440;
+
+  this.wheelRotation += rotationNeeded;
+
+  setTimeout(() => {
+
+    // Message matches the icon selected on the wheel
+    this.selectedChallenge =
+      this.ecoChallenges[randomIndex];
+
+    this.isWheelSpinning = false;
+
+  }, 1800);
+}
   ngOnInit(): void {
 
     const email = localStorage.getItem("email");
