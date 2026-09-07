@@ -53,8 +53,9 @@ export class ProfileComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadProfile();
-  }
+  this.loadProfile();
+  this.data.loadCommunityData();
+}
 
   // ==========================================
   // LOAD PROFILE FROM BACKEND
