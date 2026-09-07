@@ -8,6 +8,7 @@ import com.ecotrack.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.ecotrack.backend.repository.GoalRepository;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class GamificationService {
 
     private final UserRepository userRepository;
     private final ChallengeParticipantRepository participantRepository;
+    private final GoalRepository goalRepository;
 
     @Transactional(readOnly = true)
     public GamificationResponse getProgress(String email) {
@@ -34,13 +36,43 @@ public class GamificationService {
         int progress = next == null ? 100 : Math.min(100,
                 Math.max(0, Math.round((xp - current.minXp()) * 100f / (next.minXp() - current.minXp()))));
         long completed = participantRepository.countByUserAndStatus(user, "completed");
+
+        boolean goalCompleted = goalRepository.findByUser(user).stream()
+                .anyMatch(goal -> "completed".equalsIgnoreCase(goal.getStatus())
+                        || "achieved".equalsIgnoreCase(goal.getStatus()));
+
         List<GamificationResponse.BadgeResponse> badges = List.of(
-                new GamificationResponse.BadgeResponse("b1", "Green Beginner", completed > 0, "Complete your first community challenge."),
-                new GamificationResponse.BadgeResponse("b2", "Eco Warrior", xp >= 250, "Reach 250 XP."),
-                new GamificationResponse.BadgeResponse("b3", "Sustainability Champion", completed >= 5, "Complete 5 community challenges."),
-                new GamificationResponse.BadgeResponse("b4", "Climate Hero", xp >= 600, "Reach 600 XP."),
-                new GamificationResponse.BadgeResponse("b5", "Planet Protector", xp >= 1000, "Reach 1000 XP."),
-                new GamificationResponse.BadgeResponse("b6", "Goal Getter", false, "Achieve your first sustainability goal."));
+                new GamificationResponse.BadgeResponse(
+                        "b1", "Green Beginner",
+                        completed > 0,
+                        "Complete your first community challenge."
+                ),
+                new GamificationResponse.BadgeResponse(
+                        "b2", "Eco Warrior",
+                        xp >= 250,
+                        "Reach 250 XP."
+                ),
+                new GamificationResponse.BadgeResponse(
+                        "b3", "Sustainability Champion",
+                        completed >= 5,
+                        "Complete 5 community challenges."
+                ),
+                new GamificationResponse.BadgeResponse(
+                        "b4", "Climate Hero",
+                        xp >= 600,
+                        "Reach 600 XP."
+                ),
+                new GamificationResponse.BadgeResponse(
+                        "b5", "Planet Protector",
+                        xp >= 1000,
+                        "Reach 1000 XP."
+                ),
+                new GamificationResponse.BadgeResponse(
+                        "b6", "Goal Getter",
+                        goalCompleted,
+                        "Achieve your first sustainability goal."
+                )
+        );
         return new GamificationResponse(xp, current, next, progress, badges);
     }
 
