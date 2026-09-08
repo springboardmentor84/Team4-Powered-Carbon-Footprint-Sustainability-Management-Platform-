@@ -80,7 +80,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(
                 List.of(
                         "http://localhost:4200",
-                        "http://localhost:57277"
+                        "http://localhost:57277",
+                        "https://ecotrack-frontend-ashen.vercel.app"
                 )
         );
 
