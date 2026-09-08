@@ -7,8 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class RecommendationService {
 
-  private apiUrl = 'http://localhost:8080/api/recommendations';
-
+private apiUrl = 'https://team4-powered-carbon-footprint.onrender.com/api/recommendations';
   constructor(private http: HttpClient) {}
 
   generateRecommendation(email: string): Observable<any> {

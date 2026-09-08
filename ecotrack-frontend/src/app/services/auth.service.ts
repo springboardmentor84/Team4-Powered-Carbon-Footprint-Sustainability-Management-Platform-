@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8080/auth';
+  private apiUrl = 'https://team4-powered-carbon-footprint.onrender.com/auth';
 
   private _userName = signal<string | null>(localStorage.getItem('email'));
 

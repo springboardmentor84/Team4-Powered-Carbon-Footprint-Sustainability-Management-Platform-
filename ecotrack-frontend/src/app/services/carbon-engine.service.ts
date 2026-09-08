@@ -25,7 +25,7 @@ export interface CarbonEngineActivity {
 })
 export class CarbonEngineService {
 
-  private apiUrl = 'http://localhost:8080/carbon-engine';
+  private apiUrl = 'https://team4-powered-carbon-footprint.onrender.com/carbon-engine';
 
   constructor(private http: HttpClient) {}
 

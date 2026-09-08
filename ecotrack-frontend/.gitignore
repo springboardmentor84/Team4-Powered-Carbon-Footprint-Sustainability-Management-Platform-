@@ -3,3 +3,5 @@ dist/
 .angular/
 *.log
 .vscode/.ng-cache/
+
+.vercel

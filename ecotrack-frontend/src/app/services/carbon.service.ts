@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class CarbonService {
 
-  private apiUrl = 'http://localhost:8080/carbon';
+ private apiUrl = 'https://team4-powered-carbon-footprint.onrender.com/carbon';
 
   constructor(private http: HttpClient) {}
 

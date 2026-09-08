@@ -14,8 +14,7 @@ export class ChatService {
 
   private http = inject(HttpClient);
 
-  private apiUrl = 'http://localhost:8080/api/chat';
-
+private apiUrl = 'https://team4-powered-carbon-footprint.onrender.com/api/chat';
   sendMessage(message: string): Observable<ChatResponse> {
 
     const email = localStorage.getItem('email');

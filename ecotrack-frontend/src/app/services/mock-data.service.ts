@@ -46,8 +46,7 @@ export const XP_LEVELS: XpLevel[] = [
  */
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
-  private readonly apiUrl = 'http://localhost:8080/api';
-
+private readonly apiUrl = 'https://team4-powered-carbon-footprint.onrender.com/api';
   constructor(private http: HttpClient) {}
 readonly currentEcoScore = signal<number>(742);
   private readonly user = signal<UserProfile>({

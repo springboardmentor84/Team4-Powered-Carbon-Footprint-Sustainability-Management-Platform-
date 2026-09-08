@@ -9,8 +9,7 @@ export class ProfileService {
 
   private http = inject(HttpClient);
 
-  private apiUrl = 'http://localhost:8080/profile';
-
+private apiUrl = 'https://team4-powered-carbon-footprint.onrender.com/profile';
   // Get profile
   getProfile(email: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/${email}`);
