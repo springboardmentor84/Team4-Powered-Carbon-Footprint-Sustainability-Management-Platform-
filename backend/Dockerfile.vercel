@@ -10,4 +10,4 @@ RUN ./mvnw clean package -DskipTests
 EXPOSE 8080
 
 
-CMD ["/opt/java/openjdk/bin/java", "-jar", "/app/target/backend-0.0.1-SNAPSHOT.jar"]
+CMD ["/bin/sh", "-c", "/opt/java/openjdk/bin/java -Xms128m -Xmx512m -Dserver.port=$PORT -jar /app/target/backend-0.0.1-SNAPSHOT.jar"]
